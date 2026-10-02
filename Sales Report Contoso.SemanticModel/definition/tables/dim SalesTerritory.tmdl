@@ -1,0 +1,165 @@
+table 'dim SalesTerritory'
+	lineageTag: cc8d1172-1750-455f-8ac6-0b01c954f15b
+
+	column SalesTerritoryKey
+		dataType: int64
+		formatString: 0
+		lineageTag: def817dc-1919-4625-a253-6ecb92afc560
+		summarizeBy: count
+		sourceColumn: SalesTerritoryKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column GeographyKey
+		dataType: int64
+		formatString: 0
+		lineageTag: e29d945a-cdfb-4347-a0c7-9b0a0c8f1759
+		summarizeBy: none
+		sourceColumn: GeographyKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesTerritoryName
+		dataType: string
+		lineageTag: ad3ad156-5543-4215-8225-bc229a4f139c
+		summarizeBy: none
+		sourceColumn: SalesTerritoryName
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesTerritoryRegion
+		dataType: string
+		lineageTag: e910d127-6320-41fd-8d14-e14413263de2
+		summarizeBy: none
+		sourceColumn: SalesTerritoryRegion
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesTerritoryCountry
+		dataType: string
+		lineageTag: 5e87a789-d0c7-40bf-ab1f-397e70439794
+		summarizeBy: none
+		sourceColumn: SalesTerritoryCountry
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesTerritoryGroup
+		dataType: string
+		lineageTag: 0a641f64-3cfb-490a-a545-fd92db46f809
+		summarizeBy: none
+		sourceColumn: SalesTerritoryGroup
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Country Code'
+		dataType: string
+		lineageTag: d3f57d6e-452c-474d-8940-dc1945872fd2
+		summarizeBy: none
+		sourceColumn: Country Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Flag URL'
+		dataType: string
+		lineageTag: e2febadd-ada0-4582-a015-27c73af354d0
+		dataCategory: ImageUrl
+		summarizeBy: none
+		sourceColumn: Flag URL
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'dim SalesTerritory' = m
+		mode: import
+		queryGroup: 02_Dimentions
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+				    dbo_DimSalesTerritory = Source{[Schema="dbo",Item="DimSalesTerritory"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(dbo_DimSalesTerritory,{"SalesTerritoryLevel", "SalesTerritoryManager", "ETLLoadID", "LoadDate", "UpdateDate", "DimGeography", "SalesTerritoryLabel"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Removed Columns", each true),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Filtered Rows",{"EndDate", "StartDate", "Status"}),
+				    #"Trimmed Text" = Table.TransformColumns(#"Removed Columns1",{{"SalesTerritoryCountry", Text.Trim, type text}}),
+				    #"Added Custom" = Table.AddColumn(#"Trimmed Text", "Country Code", each let text = Text.Lower([SalesTerritoryCountry]) in
+				if text = "united states" or text = "usa" or text = "us" then "us"
+				else if text = "albania" then "al"
+				else if text = "austria" then "at"
+				else if text = "belgium" then "be"
+				else if text = "bulgaria" then "bg"
+				else if text = "croatia" then "hr"
+				else if text = "czech republic" or text = "czechia" then "cz"
+				else if text = "denmark" then "dk"
+				else if text = "estonia" then "ee"
+				else if text = "finland" then "fi"
+				else if text = "france" then "fr"
+				else if text = "germany" then "de"
+				else if text = "greece" then "gr"
+				else if text = "hungary" then "hu"
+				else if text = "ireland" then "ie"
+				else if text = "italy" then "it"
+				else if text = "the netherlands" then "nl"
+				else if text = "norway" then "no"
+				else if text = "poland" then "pl"
+				else if text = "portugal" then "pt"
+				else if text = "romania" then "ro"
+				else if text = "russia" then "ru"
+				else if text = "serbia" then "rs"
+				else if text = "slovakia" then "sk"
+				else if text = "slovenia" then "si"
+				else if text = "spain" then "es"
+				else if text = "sweden" then "se"
+				else if text = "switzerland" then "ch"
+				else if text = "ukraine" then "ua"
+				else if text = "united kingdom" or text = "uk" then "gb"
+				else if text = "armenia" then "am"
+				else if text = "azerbaijan" then "az"
+				else if text = "greater china" then "cn"
+				else if text = "georgia" then "ge"
+				else if text = "india" then "in"
+				else if text = "indonesia" then "id"
+				else if text = "israel" then "il"
+				else if text = "japan" then "jp"
+				else if text = "kazakhstan" then "kz"
+				else if text = "malaysia" then "my"
+				else if text = "pakistan" then "pk"
+				else if text = "qatar" then "qa"
+				else if text = "saudi arabia" then "sa"
+				else if text = "singapore" then "sg"
+				else if text = "south korea" or text = "korea" then "kr"
+				else if text = "thailand" then "th"
+				else if text = "turkey" or text = "turkiye" then "tr"
+				else if text = "uae" or text = "united arab emirates" then "ae"
+				else if text = "uzbekistan" then "uz"
+				else if text = "vietnam" then "vn"
+				else if text = "canada" then "ca"
+				else if text = "malta" then "mt"
+				else if text = "bhutan" then "bt"
+				else if text = "iran" then "ir"
+				else if text = "syria" then "sy"
+				else if text = "turkmenistan" then "tm"
+				else if text = "kyrgyzstan" then "kg"
+				else if text = "australia" then "au"
+				
+				else null),
+				    #"Filtered Rows1" = Table.SelectRows(#"Added Custom", each true),
+				    #"Added Custom1" = Table.AddColumn(#"Filtered Rows1", "Flag URL", each if [Country Code] = null then null else "https://hatscripts.github.io/circle-flags/flags/" & Text.Lower([Country Code]) & ".svg")
+				in
+				    #"Added Custom1"
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

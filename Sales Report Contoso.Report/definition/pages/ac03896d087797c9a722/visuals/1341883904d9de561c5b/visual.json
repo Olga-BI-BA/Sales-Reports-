@@ -1,0 +1,31 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "1341883904d9de561c5b",
+  "position": {
+    "x": 657.5558019572868,
+    "y": 90.175320188336627,
+    "z": 6000,
+    "height": 133.61744524257179,
+    "width": 173.76850021694065,
+    "tabOrder": 14000
+  },
+  "visualGroup": {
+    "displayName": "Avg Doscount group",
+    "groupMode": "ScaleMode",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Discount Depth = 1 - (Net Revenue Actual / Prise List Revenue)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,27 @@
+table 'Scenario Demand Increase'
+	lineageTag: 687e9dae-2a89-4b2b-a8fe-7e6275874e12
+
+	measure 'Demand Increase Scenario Value' = SELECTEDVALUE('Scenario Demand Increase'[Demand Increase Scenario], 0)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 49cb2e54-ebf7-4938-9ac7-679884cac7b9
+
+	column 'Demand Increase Scenario'
+		lineageTag: fa62af93-cc41-474f-a90c-bb6b7a8f837b
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Scenario Demand Increase' = calculated
+		mode: import
+		source = GENERATESERIES(-0.35, 0.35, 0.01)
+
+	annotation PBI_Id = 33126e2625204e4589dd70e15d9a59eb
+

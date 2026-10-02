@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "4a18da503107c4e0b9a4",
+  "position": {
+    "x": 447.96760134136537,
+    "y": 90.178126683921974,
+    "z": 2000,
+    "height": 134.09082388845508,
+    "width": 174.38754816581465,
+    "tabOrder": 2000
+  },
+  "visualGroup": {
+    "displayName": "Gross Margin group",
+    "groupMode": "ScaleMode"
+  }
+}

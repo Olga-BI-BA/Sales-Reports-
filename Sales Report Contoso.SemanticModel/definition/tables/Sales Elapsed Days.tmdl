@@ -1,0 +1,20 @@
+table 'Sales Elapsed Days'
+	lineageTag: e7498a5f-a8f4-4f1a-974a-117cf05e2590
+
+	column DateKey
+		formatString: General Date
+		lineageTag: 5dfc39d1-764c-4bea-96a1-1a7cf2f78771
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: fact Sales[DateKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Sales Elapsed Days' = calculated
+		mode: import
+		source = ```
+				VALUES( 'fact Sales'[DateKey]) 
+				```
+
+	annotation PBI_Id = 0c7bd6623cdb4c6a8bf6c6fdefe36de6
+

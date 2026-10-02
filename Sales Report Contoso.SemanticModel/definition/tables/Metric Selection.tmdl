@@ -1,0 +1,42 @@
+table 'Metric Selection'
+	lineageTag: bd834f33-2d38-4fbd-9d45-11ffd1719404
+
+	column 'Metric Selection'
+		lineageTag: 81857b10-6999-4dc2-beca-12aaab2a5fb3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Metric Selection]
+		sortByColumn: 'Sort Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		formatString: 0
+		lineageTag: 8e201d69-bb22-49d4-b96c-7a6042effb3e
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Metric Selection' = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Metric Selection", STRING,
+				    "Sort Order", INTEGER,
+				    {
+				        {"Net Revenue", 0},
+				        {"Gross Profit", 1},
+				        {"Gross Margin", 2},
+				        {"# Active SKUs", 3},
+				        {"Discount Depth", 4},
+				        {"Cost of Goods", 5},
+				        {"Total Returns", 6},
+				        {"YoY Revenue Trend ", 7}
+				    }
+				)
+
+	annotation PBI_Id = 528d1823ef8b43afb62bc68ee7916508
+

@@ -1,0 +1,27 @@
+table 'Scenario Unit Cost'
+	lineageTag: ccdf0188-f583-448f-a550-581c306b39a8
+
+	measure 'Unit Cost Scenario Value' = SELECTEDVALUE('Scenario Unit Cost'[Unit Cost Scenario], 0)
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: 8f0b9242-d200-434a-9f23-c87a18568248
+
+	column 'Unit Cost Scenario'
+		lineageTag: 1fca15cc-d42a-4cdc-894d-edd6baf596f2
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Scenario Unit Cost' = calculated
+		mode: import
+		source = GENERATESERIES(-0.2, 0.3, 0.01)
+
+	annotation PBI_Id = e86f881e264a48569a1308df24fdd0d0
+

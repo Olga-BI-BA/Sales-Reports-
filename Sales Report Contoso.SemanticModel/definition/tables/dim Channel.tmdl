@@ -1,0 +1,51 @@
+table 'dim Channel'
+	lineageTag: fff32b59-14a8-4132-928b-0e8eda4fa0e9
+
+	column ChannelLabel
+		dataType: string
+		lineageTag: 823eb0ba-8fd5-465e-8c12-4ee6d0f5e20d
+		summarizeBy: none
+		sourceColumn: ChannelLabel
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChannelName
+		dataType: string
+		lineageTag: dee07319-1561-4a53-992c-31cd05f6372e
+		summarizeBy: none
+		sourceColumn: ChannelName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChannelDescription
+		dataType: string
+		lineageTag: fd18f449-5c4d-402f-831e-f0b4580b35a2
+		summarizeBy: none
+		sourceColumn: ChannelDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column ChannelKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 0c2e2093-eae9-4003-89a5-9e06c29eeea2
+		summarizeBy: none
+		sourceColumn: ChannelKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'dim Channel' = m
+		mode: import
+		queryGroup: 02_Dimentions
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+				    dbo_DimChannel = Source{[Schema="dbo",Item="DimChannel"]}[Data],
+				    #"Removed Columns" = Table.RemoveColumns(dbo_DimChannel,{"FactSalesQuota", "FactSales", "UpdateDate", "LoadDate", "ETLLoadID"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

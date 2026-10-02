@@ -1,0 +1,12 @@
+role Continental_Region_access
+	modelPermission: read
+
+	tablePermission 'dim SalesTerritory' = ```
+			'dim SalesTerritory'[SalesTerritoryGroup] in 
+			CALCULATETABLE(
+			    VALUES(Security_Region_RLS[ContinentTerritoryGroup]), 
+			    Security_Region_RLS[UserEmail]= USERPRINCIPALNAME())
+			```
+
+	annotation PBI_Id = 05cfcd65754f42979344821a03fa1d37
+

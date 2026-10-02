@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "d3316540b209e034cd39",
+  "position": {
+    "x": 30.985915492957748,
+    "y": 90.140845070422543,
+    "z": 0,
+    "height": 133.80281690140845,
+    "width": 166.19718309859155,
+    "tabOrder": 18000
+  },
+  "visualGroup": {
+    "displayName": "Net Revenue card group",
+    "groupMode": "ScaleMode"
+  }
+}

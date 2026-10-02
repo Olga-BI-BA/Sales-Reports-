@@ -1,0 +1,1443 @@
+table _Measures
+	lineageTag: 698e02ab-3616-43ce-bf4b-e430d87ac465
+
+	measure 'Gross Sales' = SUM('fact Sales'[SalesAmount])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Sales Analysis
+		lineageTag: f3ba420d-38dc-4aa7-b4e1-433742ba7d87
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure COGS = SUMX('fact Sales',('fact Sales'[SalesQuantity]-'fact Sales'[ReturnQuantity])*'fact Sales'[UnitCost])
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		displayFolder: Basic Sales measures
+		lineageTag: dd33c6dc-cba3-4b49-9fbb-28579c3bb94b
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Gross Profit' = [Net Revenue]-[COGS]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Basic Sales measures
+		lineageTag: 09e6a4da-8159-4458-bd45-48f275711465
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Gross Margin' = DIVIDE([Gross Profit], [Net Revenue])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Basic Sales measures
+		lineageTag: c6952000-a1f0-4f15-b9c4-02a385f17476
+
+	measure 'Total Returns' = SUM('fact Sales'[ReturnAmount])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Basic Sales measures
+		lineageTag: 1b6c23e8-0ea5-4071-970c-9c06025a6c38
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Net Revenue' = [Gross Sales]-[Total Returns]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Basic Sales measures
+		lineageTag: 4f22e505-98ac-4575-9571-7d95f231fb7c
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Price List Revenue' = sumx('fact Sales','fact Sales'[UnitPrice]*('fact Sales'[SalesQuantity]-'fact Sales'[ReturnQuantity]))
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Basic Sales measures
+		lineageTag: 66b779b4-852f-474f-a31a-754617d41a0f
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Total Discount Amount' = SUM('fact Sales'[DiscountAmount])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Basic Sales measures
+		lineageTag: fc22a8dc-5e39-48d1-92d2-94b1d8d6b985
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Return Rate %' = DIVIDE(SUM('fact Sales'[ReturnQuantity]),SUM('fact Sales'[SalesQuantity]))
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Basic Sales measures
+		lineageTag: 72e6fca6-334b-406d-8a2d-b6e8bd274685
+
+	measure 'Discount Depth' = divide( [Total Discount Amount],[Price List Revenue])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Basic Sales measures
+		lineageTag: ca56b70e-61c6-4d56-9aeb-ca8d49d15ae8
+
+	measure 'Net Revenue PY' = CALCULATE([Net Revenue], SAMEPERIODLASTYEAR('dim Calendar'[Date]))
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Sales Analysis
+		lineageTag: 8a785d6c-64ae-49eb-ae37-aec2bc8d0269
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'YoY Revenue %' = DIVIDE([Net Revenue] - [Net Revenue PY], [Net Revenue PY])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Sales Analysis
+		lineageTag: 6ea9ef5b-5fb9-456b-9abc-d0aa6e654e23
+
+	measure 'Gross Profit PY' = CALCULATE([Gross Profit], SAMEPERIODLASTYEAR('dim Calendar'[Date]))
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Sales Analysis
+		lineageTag: d37427cf-b8ed-44fa-9133-3d1b1783b3c4
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'YoY Gross Profit, %' = DIVIDE([Gross Profit] - [Gross Profit PY], [Gross Profit PY])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Sales Analysis
+		lineageTag: acebff38-8258-4689-b713-f7d32719e5d7
+
+	measure 'Gross Margin PY' = CALCULATE([Gross Margin], SAMEPERIODLASTYEAR('dim Calendar'[Date]))
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Sales Analysis
+		lineageTag: e070dd51-e2d9-4ff6-b304-d6943f02bd94
+
+	measure 'YoY Margin pp' = ([Gross Margin] - [Gross Margin PY])*100
+		formatString: 0.00
+		displayFolder: Sales Analysis
+		lineageTag: 79d4250d-18e4-4dbb-8925-50158775e0ac
+
+	measure 'YoY Return pp' = ```
+			
+			 var ReturnRatePY = CALCULATE([Return Rate %], SAMEPERIODLASTYEAR('dim Calendar'[Date]))
+			 Return 
+			([Return Rate %] - ReturnRatePY)*100
+			```
+		displayFolder: Sales Analysis
+		lineageTag: 59287dd6-754c-42f8-89a1-e9c1aa4ca242
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Discount Depth pp' = ```
+			
+			 var AvgDiscountPY = CALCULATE([Discount Depth], SAMEPERIODLASTYEAR('dim Calendar'[Date]))
+			 Return 
+			([Discount Depth] - AvgDiscountPY)*100
+			```
+		displayFolder: Sales Analysis
+		lineageTag: 58149b1d-49a0-4349-b168-cd4e85f28108
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Subcategory Share' = ```
+			
+			VAR SelectedSubcategorySales = [Net Revenue] -- Current sales of subcotegory
+			
+			VAR TotalSales = 
+			    CALCULATE(
+			        [Net Revenue],
+			        ALL('dim Product') -- Очищаем фильтр только с субкатегорий, сохраняя фильтр по странам
+			    )
+			
+			RETURN 
+			    DIVIDE(
+			      SelectedSubcategorySales, 
+			        TotalSales,
+			        0
+			   )
+			
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Sales Analysis
+		lineageTag: 98ad0d91-e24b-4d29-8095-bf1928dfe4d3
+
+	measure 'Units Sold' = SUMX('fact Sales','fact Sales'[SalesQuantity]-'fact Sales'[ReturnQuantity])
+		formatString: 0
+		displayFolder: Basic Sales measures
+		lineageTag: 09e33100-edcf-45d5-8c27-80f711d8b7ca
+
+	measure 'Total Inventory Value' = ```
+			
+			VAR _LastAvailDate = [Latest Snapshot Date]
+			RETURN
+			SUMX(
+			    CALCULATETABLE(
+			        'fact Inventory',
+			        ALL('dim Calendar'), 'fact Inventory'[DateKey] = _LastAvailDate
+			    ),
+			    'fact Inventory'[OnHandQuantity] * 'fact Inventory'[UnitCost]
+			)
+			 
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		displayFolder: Inventory
+		lineageTag: a1c436be-4de2-4faf-996c-e6bdfbf733c4
+
+	measure 'Latest Snapshot Date' = ```
+			
+			VAR MaxSelectedDate = MAX('dim Calendar'[Date])
+			--  Inforce timestap for selected day as as 23:59:59 (To be able to work with latest inventory data available)
+			VAR EndOfSelectedDay = TRUNC(MaxSelectedDate) + TIME(23, 59, 59) 
+			RETURN
+			CALCULATE(
+			    MAX('fact Inventory'[DateKey]),
+			    ALL('dim Calendar'),
+			    'fact Inventory'[DateKey] <= EndOfSelectedDay
+			)
+			
+			
+			```
+		formatString: General Date
+		displayFolder: Inventory
+		lineageTag: ae4525f6-9522-4ac7-a015-d607e4207e82
+
+	measure 'Inventory Value Dynamics' = ```
+			
+			-- 1. Находим дату для каждой точки на оси графика
+			VAR _CurrentDate = MAX('dim Calendar'[Date]) 
+			
+			RETURN
+			-- 2. Считаем остатки строго на эту дату
+			CALCULATE(
+			    SUMX(
+			        'fact Inventory', 
+			        'fact Inventory'[OnHandQuantity] * 'fact Inventory'[UnitCost]
+			    ),
+			    'fact Inventory'[DateKey] = _CurrentDate
+			)
+			
+			```
+		formatString: #,0.###############\ "Br";-#,0.###############\ "Br";#,0.###############\ "Br"
+		displayFolder: Inventory
+		lineageTag: deeb7fdb-5865-49ff-b0c9-40879af4c26e
+
+		annotation PBI_FormatHint = {"currencyCulture":"ru-BY"}
+
+	measure 'Total Inventory PY' = ```
+			
+			VAR _LastAvailDate = [Latest Snapshot Date]-365
+			RETURN
+			SUMX(
+			    CALCULATETABLE(
+			        'fact Inventory',
+			        ALL('dim Calendar'), 'fact Inventory'[DateKey] = _LastAvailDate
+			    ),
+			    'fact Inventory'[OnHandQuantity] * 'fact Inventory'[UnitCost]
+			)
+			 
+			```
+		formatString: #,0.###############\ "Br";-#,0.###############\ "Br";#,0.###############\ "Br"
+		displayFolder: Inventory
+		lineageTag: 12785c9e-0490-48bf-9f22-2f651ac8500f
+
+		annotation PBI_FormatHint = {"currencyCulture":"ru-BY"}
+
+	measure 'Avg Aging' = ```
+			
+			VAR _LastAvailDate = [Latest Snapshot Date] 
+			RETURN
+			CALCULATE(
+			    AVERAGE('fact Inventory'[Aging]),
+			    -- change of filter context (ignoring dimCalendar filter) and selection of one day
+			    ALL('dim Calendar'), 
+			    'fact Inventory'[DateKey] = _LastAvailDate
+			)
+			
+			 
+			```
+		displayFolder: Inventory
+		lineageTag: b979174b-bde0-43c6-8fc9-235232527467
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total COGS' = ```
+			
+			SUMX('fact Sales', 'fact Sales'[SalesQuantity] * 'fact Sales'[UnitCost]) 
+			- SUMX('fact Sales', 'fact Sales'[ReturnQuantity] * 'fact Sales'[UnitCost])
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		displayFolder: Inventory
+		lineageTag: 750dc885-f17d-446f-9129-3fecadfc72d7
+
+	measure 'Avg Inventory Value' = ```
+			
+			AVERAGEX(
+			    VALUES('dim Calendar'[Date]),
+			    [Total Inventory Value]
+			)
+			
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		displayFolder: Inventory
+		lineageTag: 3bf8e9a2-25f1-4967-a017-96d4fdf17501
+
+	measure 'Inventory Turnover Ratio' = ```
+			
+			DIVIDE(
+			    [Total COGS],
+			    [Avg Inventory Value],
+			    BLANK()
+			)
+			
+			```
+		displayFolder: Inventory
+		lineageTag: 6bd510e6-934c-4d4b-8378-9fe000bea3f7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Days Inventory' = ```
+			
+			-- How many days are in the filter context (1 day, month or year)
+			VAR _DaysInPeriod = COUNTROWS(VALUES('dim Calendar'[Date])) 
+			RETURN
+			DIVIDE(
+			    _DaysInPeriod, 
+			    [Inventory Turnover Ratio],
+			    BLANK()
+			)
+			
+			```
+		displayFolder: Inventory
+		lineageTag: 22fd1015-a232-46a9-b21c-04dc4c46ed39
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Scenario Net Revenue Price List Change' = sumx('fact Sales','fact Sales'[UnitPrice]*(1+ 'Scenario Price (%)'[Price adjustment (%) Value])*('fact Sales'[SalesQuantity]-'fact Sales'[ReturnQuantity]))
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Scenarios
+		lineageTag: 0f10d55c-f0ed-4ad8-b8da-a4de08a0dedd
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Scenario Gross Profit' = [Scenario Net Revenue]-[Scenario COGS]
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Scenarios
+		lineageTag: 6ad395a2-68f5-455d-a206-4e5447ffd54f
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Scenario Gross Margin %' = DIVIDE([Scenario Gross Profit], [Scenario Net Revenue])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Scenarios
+		lineageTag: bce72a90-e283-4cdc-a1f0-1817d7971fa2
+
+	measure 'Top 10 Products Revenue' = ```
+			
+			Sumx(
+			    TOPN(
+			    10,
+			    ALLSELECTED('dim Product'[Product]),
+			    [Net Revenue]
+			), [Net Revenue])
+			
+			
+			
+			
+			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Basic Sales measures
+		lineageTag: 675e388c-a577-4838-9adf-cc686051ff1d
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'vs Net Revenue MoM' = ```
+			
+			var _CM = [Net Revenue]
+			var _PM = CALCULATE([Net Revenue],DATEADD('dim Calendar'[Date], -1,MONTH))
+			VAR _diff = DIVIDE(_CM-_PM,_PM)
+			RETURN
+			        _diff
+			
+			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Sales Analysis
+		lineageTag: 0a0cc53a-aaa2-4328-a0d3-ddbfa2dd3a46
+
+	measure 'viz YoY Net Revenue' = ```
+			
+			var _CY = [Net Revenue]
+			var _PY = CALCULATE([Net Revenue],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = DIVIDE(_CY-_PY,_PY)
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: 590ecfe4-4dda-4894-8d9d-565a36647298
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'vs PM Net Revenue CF' = ```
+			
+			var _CY = [Net Revenue]
+			var _PY = CALCULATE([Net Revenue],DATEADD('dim Calendar'[Date],-1,MONTH))
+			VAR _diff = DIVIDE(_CY-_PY,_PY)
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: 2e412536-2492-4138-b027-48b0b69a2d05
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CF YoY Net Revenue' = ```
+			
+			var _CY = [Net Revenue]
+			var _PY = CALCULATE([Net Revenue],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = DIVIDE(_CY-_PY,_PY)
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, "Green", 
+			                      _diff < 0, "Red",
+			                       "Grey"
+			                    )
+			RETURN
+			        _format
+			```
+		displayFolder: Viz Cards
+		lineageTag: eecf0e15-6168-4388-95c7-5221f826d889
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'viz YoY Gross Profit' = ```
+			
+			var _CY = [Gross Profit]
+			var _PY = CALCULATE([Gross Profit],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = DIVIDE(_CY-_PY,_PY)
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: 38c3e5c4-6d72-490a-9c92-9a8731381dc2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'viz YoY Gross Margin' = ```
+			
+			var _CY = [Gross Margin]
+			var _PY = CALCULATE([Gross Margin],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = (_CY-_PY)*100
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00 pp"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00 pp"),
+			                       FORMAT ( _diff, "0.00 pp")
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: ed201a66-c1a8-49f6-9325-e0bdbb2e6dae
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CF YoY Gross Profit' = ```
+			
+			var _CY = [Gross Profit]
+			var _PY = CALCULATE([Gross Profit],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = DIVIDE(_CY-_PY,_PY)
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, "Green", 
+			                      _diff < 0, "Red",
+			                       "Grey"
+			                    )
+			RETURN
+			        _format
+			```
+		displayFolder: Viz Cards
+		lineageTag: 2016c163-754b-4dd9-8ee2-becf8df99bd1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CF YoY Gross Margin' = ```
+			
+			var _CY = [Gross Margin]
+			var _PY = CALCULATE([Gross Margin],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = (_CY-_PY)*100
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, "Green", 
+			                      _diff < 0, "Red",
+			                       "Grey"
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: e48f9e5e-0f78-44de-9d85-137f78c365f7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'viz YoY Units Sold' = ```
+			
+			var _CY = [Units Sold]
+			var _PY = CALCULATE([Units Sold],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = DIVIDE(_CY-_PY,_PY)
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			RETURN
+			        _format
+			```
+		displayFolder: Viz Cards
+		lineageTag: 22e655b9-d3ac-4f06-a151-9d1cacd08b19
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CF YoY Units Sold' = ```
+			
+			var _CY = [Units Sold]
+			var _PY = CALCULATE([Units Sold],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = (_CY-_PY)*100
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, "Green", 
+			                      _diff < 0, "Red",
+			                       "Grey"
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: 51c04f77-84f2-45ec-a152-bb5d497c2ff3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CF YoY Average Discount' = ```
+			
+			var _CY = [Discount Depth]
+			var _PY = CALCULATE([Discount Depth],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = (_CY-_PY)*100
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, "Red", 
+			                      _diff < 0, "Green",
+			                       "Grey"
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: d81c28ef-a528-403b-9fbd-a61b5a273f2e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'viz YoY Average Discount' = ```
+			
+			var _CY = [Discount Depth]
+			var _PY = CALCULATE([Discount Depth],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = (_CY-_PY)*100
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00 pp"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00 pp"),
+			                       FORMAT ( _diff, "0.00 pp")
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: 2dac3c1d-5bbb-4887-806b-fe74f06780f7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Last Transaction Date' = ```
+			
+			CALCULATE(
+			    MAX('fact Sales'[DateKey]), ALL()
+			)
+			
+			```
+		displayFolder: Working Days & Dates
+		lineageTag: 6ef7a03d-eaae-415b-b422-222573b0d7f7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Net Revenue MTD' = CALCULATE([Net Revenue],DATESMTD('dim Calendar'[Date]))
+		displayFolder: Sales Analysis
+		lineageTag: f85b6b39-8478-4645-b251-2f14042accb9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Last Calendard Date' = MAX('dim Calendar'[Date])
+		displayFolder: Working Days & Dates
+		lineageTag: bda0baa6-757e-491f-baf5-6a6163be8ffe
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of SKU' = COUNTROWS('dim Product')
+		formatString: 0
+		displayFolder: Sales Analysis
+		lineageTag: e8541dc0-d909-449a-ad52-b05f51f5d3bf
+
+	measure 'Selling SKUs' =
+			
+			CALCULATE (
+			    DISTINCTCOUNT ( 'fact Sales'[ProductKey]),
+			    'fact Sales'[SalesQuantity]> 0
+			)
+		formatString: 0
+		displayFolder: Basic Sales measures
+		lineageTag: 8ff3d79a-d887-4599-a2b9-b835bf07eb0a
+
+	measure 'CF YoY Active SKU' = ```
+			
+			var _CY = [Selling SKUs]
+			var _PY = CALCULATE([Selling SKUs],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = (_CY-_PY)*100
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, "Green", 
+			                      _diff < 0, "Red",
+			                       "Grey"
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Viz Cards
+		lineageTag: 10d2cb2e-1419-4e4b-98d7-465fce9fb3d7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'viz YoY Active SKU' = ```
+			
+			var _CY = [Selling SKUs]
+			var _PY = CALCULATE([Selling SKUs],DATEADD('dim Calendar'[Date],-1,YEAR))
+			VAR _diff = DIVIDE(_CY-_PY,_PY)
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			RETURN
+			        _format
+			```
+		displayFolder: Viz Cards
+		lineageTag: d64b0dfa-8f5a-4476-a336-2cdef3ee220c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Selling SKUs PY' = CALCULATE([Selling SKUs], SAMEPERIODLASTYEAR('dim Calendar'[Date]))
+		formatString: 0
+		displayFolder: Sales Analysis
+		lineageTag: f7c4791d-d32e-467d-b4c9-8800bbce66b1
+
+	measure 'YoY Revenue % label' = IF(ISBLANK([YoY Revenue %]), 1, [YoY Revenue %])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Viz ABC XYZ
+		lineageTag: de99ebf2-d5aa-4429-85b1-7e8d31cfb6be
+
+	measure 'Share of Gross Profit  Annual' =
+			
+			VAR ProductGP = [Gross Profit]
+			VAR TotalGP =
+			    CALCULATE (
+			        [Gross Profit],
+			        REMOVEFILTERS ( 'dim Product'),
+			        ALLEXCEPT ( 'dim Calendar', 'dim Calendar'[Year])
+			    )
+			RETURN
+			    DIVIDE ( ProductGP, TotalGP )
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Viz ABC XYZ
+		lineageTag: 038277fe-d43c-4df5-93be-88f0bd4bf9bf
+
+	measure 'Share of Revenue Annual' =
+			
+			VAR ProductR = [Net Revenue]
+			VAR TotalGP =
+			    CALCULATE (
+			        [Net Revenue],
+			        REMOVEFILTERS ( 'dim Product'),
+			        ALLEXCEPT ( 'dim Calendar', 'dim Calendar'[Year])
+			    )
+			RETURN
+			    DIVIDE ( ProductR, TotalGP )
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		displayFolder: Viz ABC XYZ
+		lineageTag: 78659851-a69d-42d4-a6ba-8004f1af09e0
+
+	measure 'CV Qty' =
+			
+			VAR _MonthlyQty =
+			    ADDCOLUMNS (
+			        VALUES ( 'dim Calendar'[Year Month] ),
+			        "QtyValue", CALCULATE ( SUM ( 'fact Sales'[SalesQuantity] ) ) + 0
+			    )
+			VAR _Avg =
+			    AVERAGEX ( _MonthlyQty, [QtyValue] )
+			VAR _SD =
+			    STDEVX.P ( _MonthlyQty, [QtyValue] )
+			RETURN
+			    DIVIDE ( _SD, _Avg )
+		displayFolder: Viz ABC XYZ
+		lineageTag: 232ee384-1529-4a5c-9272-11c192446659
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CV P33' = PERCENTILE.INC ( 'dim Product'[CV Qty Col 2025], 0.33 )
+		displayFolder: Viz ABC XYZ
+		lineageTag: 96c6f8f7-59ca-4493-8e31-3e5cfdf94254
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'CV P67' = PERCENTILE.INC ( 'dim Product'[CV Qty Col 2025], 0.67 )
+		displayFolder: Viz ABC XYZ
+		lineageTag: ab99357c-2af6-4c29-8fb6-ff9160f3c7ea
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Viz Title ABC SKU' = ```
+			"A = 1221 SKUs (45% of SKUs) gives 79,98% Revenue and 81,01% Profit. 
+			C = 711 SKUs gives 5% Renevue and 4,62% Profit."
+			```
+		displayFolder: Viz ABC XYZ
+		lineageTag: 09dd0495-ba9c-4caa-8b89-dae270faeb83
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Net Revenue Gain/Loss' = [Net Revenue]-[Net Revenue PY]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Sales Analysis
+		lineageTag: 3b04d07a-c4dc-41e9-8c59-41fb091386f6
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Share in Net Revenue' =
+			
+			DIVIDE(
+			    [Net Revenue],
+			    CALCULATE([Net Revenue], ALLSELECTED()))
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		displayFolder: Sales Analysis
+		lineageTag: f36dd22f-c11c-4568-8690-68e4bc76391d
+
+	measure 'Label Placeholder' = 0
+		formatString: 0
+		displayFolder: Viz Cards
+		lineageTag: 6950e0ad-f4eb-4c0b-b669-987a135bdf54
+
+	measure 'YoY Revenue' = [Net Revenue] - [Net Revenue PY]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Sales Analysis
+		lineageTag: cf11bf47-f1a0-45f6-8eec-e1873e733be7
+
+	measure 'Dynamic Category Title ABCXYZ' =
+			
+			VAR SelectedGroup =
+			   SELECTEDVALUE('dim Product'[ABC XYZ 2025], "All")
+			RETURN
+			SWITCH(
+			   SelectedGroup,
+			   "AX", "AX – Protect & Prioritize",
+			   "AY", "AY – Forecast Carefully",
+			   "AZ", "AZ – Manage Selectively",
+			   "BX", "BX – Automate",
+			   "BY", "BY – Balance",
+			   "BZ", "BZ – Control Inventory",
+			   "CX", "CX – Simplify",
+			   "CY", "CY – Optimize",
+			   "CZ", "CZ – Rationalize",
+			   "Global ABC–XYZ Portfolio"
+			)
+		displayFolder: Viz Dynamic Titles
+		lineageTag: 7ce80c29-e177-4fcb-a369-557f980aa26f
+
+	measure 'Dynamic Insight ABCXYZ' = ```
+			
+			
+			VAR SelectedGroup =
+			
+			    SELECTEDVALUE('dim Product'[ABC XYZ 2025], "All")
+			
+			RETURN
+			
+			SWITCH(
+			
+			    SelectedGroup,
+			
+			    "AX",
+			
+			        "High-value products with stable demand form the core of the business.",
+			
+			    "AY",
+			
+			        "High-value products face demand variability, increasing the risk of stockouts or excess inventory.",
+			
+			    "AZ",
+			
+			        "High-value products have highly unpredictable demand.",
+			
+			    "BX",
+			
+			        "Medium-value products with stable demand are relatively easy to manage.",
+			
+			    "BY",
+			
+			        "Medium-value products show variable demand, requiring a balance between availability and inventory cost.",
+			
+			    "BZ",
+			
+			        "Medium-value products with unpredictable demand create a higher risk of excess inventory.",
+			
+			    "CX",
+			
+			        "Low-value products have stable demand but limited business impact.",
+			
+			    "CY",
+			
+			        "Low-value products with variable demand may tie up inventory inefficiently.",
+			
+			    "CZ",
+			
+			        "Low-value products with highly unpredictable demand have the lowest business priority.",
+			
+			    "Select an ABC–XYZ group to see the key insight."
+			
+			)
+			 
+			```
+		displayFolder: Viz Dynamic Titles
+		lineageTag: e0531f79-281d-404a-8dfd-0b41530c3004
+
+	measure 'Dynamic Action ABCXYZ' = ```
+			
+			
+			VAR SelectedGroup =
+			
+			    SELECTEDVALUE('dim Product'[ABC XYZ 2025], "All")
+			
+			RETURN
+			
+			SWITCH(
+			
+			    SelectedGroup,
+			
+			    "AX",
+			
+			        "Action: Ensure high availability and prioritize replenishment.",
+			
+			    "AY",
+			
+			        "Action: Improve demand forecasting and maintain appropriate safety stock.",
+			
+			    "AZ",
+			
+			        "Action: Manage inventory individually and review forecasts frequently.",
+			
+			    "BX",
+			
+			        "Action: Automate replenishment and optimize inventory levels.",
+			
+			    "BY",
+			
+			        "Action: Adjust inventory levels and replenishment frequency.",
+			
+			    "BZ",
+			
+			        "Action: Reduce overstock risk and review purchasing quantities.",
+			
+			    "CX",
+			
+			        "Action: Use simple replenishment rules and minimize management effort.",
+			
+			    "CY",
+			
+			        "Action: Reduce inventory and review assortment relevance.",
+			
+			    "CZ",
+			
+			        "Action: Consider reducing stock, moving to make-to-order, or delisting.",
+			
+			    ""
+			
+			)
+			 
+			```
+		displayFolder: Viz Dynamic Titles
+		lineageTag: 1ec84f21-28ec-415e-a7d1-e873dcd189f4
+
+	measure 'Dynamic title SKU Product page' = "#SKU " & SELECTEDVALUE('dim Product'[Subcategory])
+		displayFolder: Viz Dynamic Titles
+		lineageTag: 0ec10ea3-a698-43c9-b530-a23e6de648cc
+
+	measure 'Top 5 Gross Profit' = ```
+			
+			
+			IF (
+			    ISINSCOPE( 'dim product'[productkey] ),
+			    RANKX (
+			        CALCULATETABLE (
+			            VALUES ( 'dim product'[productkey] ),
+			            ALLSELECTED ( 'dim product'[productkey] )
+			        ),
+			        [gross profit]
+			    )
+			)
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Viz Cards
+		lineageTag: 55c1ea17-22cd-4675-8964-a9ce267b4eed
+
+	measure 'Gross Profit Gain/Loss' = [Gross Profit]-[Gross Profit PY]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Sales Analysis
+		lineageTag: f9896e8d-a7ed-4016-8599-b276040702b0
+
+	measure 'Open Store Num' = CALCULATE(DISTINCTCOUNT('dim Store'[StoreKey]), 'dim Store'[Status] ="On")
+		formatString: 0
+		displayFolder: Sales Analysis
+		lineageTag: f70c6257-6c61-44a2-88e6-44b14ad4cf5f
+
+	measure 'Most Profitable Store' = ```
+			
+			Var StoreTable = ADDCOLUMNS(VALUES('dim Store'[StoreName]),"GR",[Gross Profit])
+			Var MPS = maxx (topN (1, StoreTable, [GR], Desc), 'dim Store'[StoreName])
+			Return 
+			MID(MPS,9,LEN(MPS))
+			```
+		displayFolder: Sales Analysis
+		lineageTag: 85511575-278a-4b95-b609-a59aebae847a
+
+	measure 'Scenario Quantity' = [Units Sold]*(1+[Demand Increase Scenario Value])
+		displayFolder: Scenarios
+		lineageTag: edb8fab6-d384-447e-8892-97458b0d8cb6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Scenario Price List Revenue' = ```
+			
+			SUMX(VALUES('fact Sales'[ProductKey]), 
+			var CurrentUnits = [Units Sold]
+			var ScenarioUnits = CurrentUnits*(1+ [Demand Increase Scenario Value])
+			var UnitPrice = CALCULATE(MAX('fact Sales'[UnitPrice]))
+			Return 
+			ScenarioUnits*UnitPrice
+			)
+			```
+		formatString: #,0.###############\ "Br";-#,0.###############\ "Br";#,0.###############\ "Br"
+		displayFolder: Scenarios
+		lineageTag: a99505c3-019d-46d9-bae3-279d996c1a81
+
+		annotation PBI_FormatHint = {"currencyCulture":"ru-BY"}
+
+	measure 'Scenario Net Revenue' = [Scenario Price List Revenue]*(1-[Discount Scenario Value])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Scenarios
+		lineageTag: c4f998ef-e42d-45f7-b230-c1bc45df8106
+
+	measure 'Scenario COGS' = ```
+			
+			SUMX(VALUES('fact Sales'[ProductKey]), 
+			var CurrentUnits = [Units Sold]
+			var ScenarioUnits = CurrentUnits*(1+ [Demand Increase Scenario Value])
+			var UnitCost = CALCULATE(MAX('fact Sales'[UnitCost]))
+			var UnitCostScenario = UnitCost*(1+[Unit Cost Scenario Value])
+			Return 
+			ScenarioUnits*UnitCostScenario
+			)
+			```
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		displayFolder: Scenarios
+		lineageTag: 472c0753-dd33-4d92-81f9-cca22fe08aa7
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'vs Net Revenue Fact 2025' = [Scenario Net Revenue]-[Net Revenue]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Scenarios
+		lineageTag: cca006c0-64e6-4963-9fe6-70691e4b2f58
+
+	measure 'vs Gross Profit Fact 2025' = [Scenario Gross Profit]-[Gross Profit]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Scenarios
+		lineageTag: 982edf6e-8a70-4d27-9977-3da46f8a1128
+
+	measure 'vs COGS Fact 2025' = [Scenario COGS]-[COGS]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Scenarios
+		lineageTag: 64aaf158-081b-47c3-9569-1da3f817ea1e
+
+	measure 'vs Net Revenue Fact 2025, %' = ```
+			
+			
+			VAR _diff = DIVIDE([Scenario Net Revenue]-[Net Revenue],[Net Revenue])
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Scenarios
+		lineageTag: 1fa7c8b2-b069-4003-b677-8cfe0cd9a137
+
+	measure 'vs Gross Profit Fact 2025, %' = ```
+			
+			
+			VAR _diff = DIVIDE([Scenario Gross Profit]-[Gross Profit],[Gross Profit])
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Scenarios
+		lineageTag: 073e6414-ad68-4def-bb4e-afac66745ba7
+
+	measure 'vs COGS Fact 2025, %' = ```
+			
+			VAR _diff = DIVIDE([Scenario COGS]-[COGS],[COGS])
+			VAR _format = SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			RETURN
+			        _format
+			
+			```
+		displayFolder: Scenarios
+		lineageTag: c206d09e-2b63-48a6-8fd3-a77e8ef5e27f
+
+	measure 'Dymanic SubTitle Daily Cockpit' = ```
+			
+			
+			VAR MacroText =
+			    IF(
+			        HASONEVALUE('dim SalesTerritory'[SalesTerritoryGroup]),
+			        SELECTEDVALUE('dim SalesTerritory'[SalesTerritoryGroup]),
+			        --"All Macroregions" 
+			        ""
+			    )
+			
+			VAR CountryText =
+			    IF(
+			        HASONEVALUE('dim SalesTerritory'[SalesTerritoryCountry]),
+			        SELECTEDVALUE('dim SalesTerritory'[SalesTerritoryCountry]),
+			        --"All countries"
+			        ""
+			    )
+			
+			VAR ChannelText =
+			    IF(
+			        HASONEVALUE('dim Channel'[ChannelName]),
+			        SELECTEDVALUE('dim Channel'[ChannelName]),
+			        --"All channels"
+			        ""
+			    )
+			
+			VAR SubcategoryText =
+			    IF(
+			        HASONEVALUE('dim Product'[Category]),
+			        SELECTEDVALUE('dim Product'[Category]),
+			        --"All subcategories"
+			        ""
+			    )
+			
+			    VAR MacroBlock =
+			    IF(
+			        MacroText <> "",
+			        " • " & MacroText,
+			        ""
+			    )
+			
+			VAR CountryBlock =
+			    IF(
+			        CountryText <> "",
+			        " • " & CountryText,
+			        ""
+			    )
+			
+			VAR ChannelBlock =
+			    IF(
+			        ChannelText <> "",
+			        " • " & ChannelText,
+			        ""
+			    )
+			
+			VAR SubcategoryBlock =
+			    IF(
+			        SubcategoryText <> "",
+			        " • " & SubcategoryText,
+			        ""
+			    )
+			
+			VAR Result =   MacroBlock
+			    & CountryBlock
+			    & ChannelBlock
+			    & SubcategoryBlock
+			RETURN
+			    if(Result ="", "Overall Daily Performance", Result)
+			
+			
+			```
+		displayFolder: Viz Dynamic Titles
+		lineageTag: f9f6535e-a140-48f0-9a9e-ad7ff1c331e9
+
+	measure 'Dynamic Title Today' =
+			" Today, "& FORMAT(SELECTEDVALUE('dim Calendar'[Date]), "d MMMM")
+			--- Note: the Today date is simulated via the slicer for demonstration purposes. In real-world use, it would be calculated from actual data using a different formula
+			---" Today, "& FORMAT(TODAY(), "d MMMM")
+		displayFolder: Viz Dynamic Titles
+		lineageTag: 2ed3b682-6792-4068-adb9-1a2e6724bfc6
+
+	measure 'Number of Working Days' = CALCULATE(COUNTROWS('dim Calendar'),'dim Calendar'[IsWorkDay]="WorkDay")
+		formatString: 0
+		displayFolder: Working Days & Dates
+		lineageTag: 3340d19e-ab3d-4bb0-b9ce-c511bc30113c
+
+	measure 'Number of Working Days in Month' = ```
+			
+			
+			var _yestredayd = [Last Sale Date] 
+			
+			var _startOfMonth = DATE(Year(_yestredayd), MONTH(_yestredayd),1) 
+			
+			RETURN 
+			
+			CALCULATE( COUNTROWS( 'dim Calendar'),'dim Calendar'[IsWorkDay] = "WorkDay", DATESBETWEEN('dim Calendar'[Date], _startOfMonth,EOMONTH(_yestredayd,0))) 
+			```
+		formatString: 0
+		displayFolder: Working Days & Dates
+		lineageTag: 83368dca-951e-4c4a-bc2a-5a46e345259b
+
+	measure 'Last Sale Date' = ```
+			
+			-- Note: the Last Sale date is simulated via the slicer for demonstration purposes. In real-world use, it would be calculated from actual data using a different formula
+			SELECTEDVALUE('dim Calendar'[Date])
+			
+			```
+		formatString: dd/mm/yyyy
+		displayFolder: Working Days & Dates
+		lineageTag: 177edeb6-db1f-465b-a794-17911444cc93
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	measure 'Number of Days Elapsed MTD' = ```
+			
+			
+			var _yestredayd = [Last Sale Date] 
+			
+			var _startOfMonth = DATE(Year(_yestredayd), MONTH(_yestredayd),1) 
+			
+			RETURN 
+			
+			CALCULATE ( COUNTROWS ( 'Sales Elapsed Days') , 'dim Calendar'[IsWorkDay] = "WorkDay", DATESBETWEEN('dim Calendar'[Date], _startOfMonth,_yestredayd)) 
+			
+			```
+		formatString: 0
+		displayFolder: Working Days & Dates
+		lineageTag: 38273868-40a3-435e-9d23-a5f0de17f7f7
+
+	measure 'Month Detail Dymanic Title' = ```
+			" • " & FORMAT(SELECTEDVALUE('dim Calendar'[Date])," dddd") & " •  " & " Week "& Weeknum(SELECTEDVALUE('dim Calendar'[Date]),2) &  " •  "  
+			
+			& [Number of Days Elapsed MTD]& "/" & [Number of Working Days in Month] & " Working Days" 
+			```
+		displayFolder: Viz Dynamic Titles
+		lineageTag: a3bd9af8-3013-4aa6-a575-e137214a5fa5
+
+	measure 'Number of Days Elapsed' = ```
+			CALCULATE ( COUNTROWS ( 'Sales Elapsed Days') , 'dim Calendar'[IsWorkDay] = "WorkDay" ) 
+			```
+		formatString: 0
+		displayFolder: Working Days & Dates
+		lineageTag: 6fda2cbf-ca05-48d3-921b-64890c5f14e5
+
+	measure 'Forecast Net Revenue MONTH' = ```
+			
+			
+			VAR WorkingDaysPlanned = [Number of Working Days in Month] 
+			VAR _NR_MTD = CALCULATE([Net Revenue], DATESMTD('dim Calendar'[Date]))
+			VAR Result = 
+			
+			    DIVIDE ( _NR_MTD, [Number of Days Elapsed MTD] ) * WorkingDaysPlanned 
+			
+			RETURN 
+			
+			    Result 
+			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Forecast
+		lineageTag: 4e05bc87-c60e-488b-aed0-4b92518c4458
+
+	measure 'Forecast Gross Profit MONTH' = ```
+			
+			
+			VAR WorkingDaysPlanned = [Number of Working Days in Month] 
+			VAR _GP_MTD = CALCULATE([Gross Profit], DATESMTD('dim Calendar'[Date]))
+			VAR Result = 
+			
+			    DIVIDE ( _GP_MTD, [Number of Days Elapsed MTD] ) * WorkingDaysPlanned 
+			
+			RETURN 
+			
+			    Result 
+			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Forecast
+		lineageTag: db878018-d5be-4eab-87bf-8e69e2e2f456
+
+	measure 'Gross Profit Forecast vs MPY' = ```
+			
+			VAR WorkingDaysPlanned = [Number of Working Days in Month] 
+			VAR _NR_MTD = CALCULATE([Gross Profit], DATESMTD('dim Calendar'[Date]))
+			VAR Result = 
+			    DIVIDE ( _NR_MTD, [Number of Days Elapsed MTD] ) * WorkingDaysPlanned 
+			Var GR_MPY = [Gross Profit MPY]
+			VAR _diff=Result - GR_MPY
+			
+			RETURN 
+			_diff
+			```
+		displayFolder: Forecast
+		lineageTag: 65d5452b-4d1e-468e-97eb-60b5c96f169f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Gross Profit Forecast vs PY, %' = ```
+			
+			VAR _GP_MPY= [Gross Profit MPY]
+			VAR _diff=DIVIDE([Forecast Gross Profit MONTH]-_GP_MPY,_GP_MPY)
+			RETURN 
+			SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			```
+		displayFolder: Forecast
+		lineageTag: 731b91e4-26b2-415e-99c7-4db7f9487763
+
+	measure 'Gross Profit MPY' =
+			
+			VAR _SelectedDate =
+			   [Last Sale Date]
+			
+			VAR _PYlastdate =
+			    EDATE(_SelectedDate, -12)
+			
+			VAR _PYlastmonthday =
+			    EOMONTH(_PYlastdate, 0)
+			
+			VAR _PY_startOfMonth =
+			    DATE(
+			        YEAR(_PYlastdate),
+			        MONTH(_PYlastdate),
+			        1
+			    )
+			
+			RETURN
+			    CALCULATE(
+			        [Gross Profit],
+			        REMOVEFILTERS('dim Calendar'),
+			        DATESBETWEEN(
+			            'dim Calendar'[Date],
+			            _PY_startOfMonth,
+			            _PYlastmonthday
+			        )
+			    )
+		displayFolder: Sales Analysis
+		lineageTag: 85f7e078-3462-4c3c-b809-a52cde280e8a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Net Revenue MPY' =
+			
+			VAR _SelectedDate =
+			   [Last Sale Date]
+			
+			VAR _PYlastdate =
+			    EDATE(_SelectedDate, -12)
+			
+			VAR _PYlastmonthday =
+			    EOMONTH(_PYlastdate, 0)
+			
+			VAR _PY_startOfMonth =
+			    DATE(
+			        YEAR(_PYlastdate),
+			        MONTH(_PYlastdate),
+			        1
+			    )
+			
+			RETURN
+			    CALCULATE(
+			        [Net Revenue],
+			        REMOVEFILTERS('dim Calendar'),
+			        DATESBETWEEN(
+			            'dim Calendar'[Date],
+			            _PY_startOfMonth,
+			            _PYlastmonthday
+			        )
+			    )
+		displayFolder: Sales Analysis
+		lineageTag: f07f3bb7-e5ca-4bab-93cf-7d3b66920a83
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Net Revenue Forecast vs MPY' = ```
+			
+			VAR WorkingDaysPlanned = [Number of Working Days in Month] 
+			VAR _NR_MTD = CALCULATE([Net Revenue], DATESMTD('dim Calendar'[Date]))
+			VAR Result = 
+			    DIVIDE ( _NR_MTD, [Number of Days Elapsed MTD] ) * WorkingDaysPlanned 
+			Var NR_MPY = [Net Revenue MPY]
+			VAR _diff=Result - NR_MPY
+			
+			RETURN 
+			_diff
+			```
+		displayFolder: Forecast
+		lineageTag: 765011f7-0bf5-42c9-9fe1-bd7e9a2cb2fe
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Net Revenue Forecast vs PY, %' = ```
+			
+			VAR _GP_MPY= [Net Revenue MPY]
+			VAR _diff=DIVIDE([Forecast Net Revenue MONTH]-_GP_MPY,_GP_MPY)
+			RETURN 
+			SWITCH(TRUE(),
+			                      _diff > 0, UNICHAR(11165) & " " & FORMAT (_diff, "0.00%"), 
+			                      _diff < 0, UNICHAR(11167) & " " & FORMAT ( _diff, "0.00%"),
+			                       FORMAT ( _diff, "0.00%")
+			                    )
+			```
+		displayFolder: Forecast
+		lineageTag: cc77971f-af49-42ec-956f-ba96b9750c6c
+
+	measure 'Dymanic SubTitle Products Page' = ```
+			
+			
+			-- 1. MacroRegions
+			
+			VAR SelectedMacroTable = VALUES('dim SalesTerritory'[SalesTerritoryGroup])
+			
+			VAR MacroCount = COUNTROWS(SelectedMacroTable)
+			
+			VAR MacroText = 
+			
+			    SWITCH(
+			        TRUE(),
+			        NOT(ISFILTERED('dim SalesTerritory'[SalesTerritoryGroup])), "All Macroregions",
+			        MacroCount = 1, SELECTEDVALUE('dim SalesTerritory'[SalesTerritoryGroup]),
+			        MacroCount = 2, CONCATENATEX(
+			            SelectedMacroTable,
+			            'dim SalesTerritory'[SalesTerritoryGroup],
+			            ", "
+			        ),
+			        MacroCount > 2, 
+			            VAR Top2Macro = TOPN(
+			                2,
+			                SelectedMacroTable,
+			                'dim SalesTerritory'[SalesTerritoryGroup],
+			                ASC
+			            )
+			            RETURN
+			                CONCATENATEX(
+			                    Top2Macro,
+			                    'dim SalesTerritory'[SalesTerritoryGroup],
+			                    ", "
+			                ) & ", etc.",
+			        "All Macroregions"
+			    )
+			
+			-- 2. Countries
+			
+			VAR SelectedCountriesTable = VALUES('dim SalesTerritory'[SalesTerritoryCountry])
+			
+			VAR CountriesCount = COUNTROWS(SelectedCountriesTable)
+			
+			VAR CountryText = 
+			
+			    SWITCH(
+			        TRUE(),
+			        NOT(ISFILTERED('dim SalesTerritory'[SalesTerritoryCountry])), "All countries",
+			        CountriesCount = 1, SELECTEDVALUE('dim SalesTerritory'[SalesTerritoryCountry]), 
+			        CountriesCount = 2, CONCATENATEX(
+			            SelectedCountriesTable,
+			            'dim SalesTerritory'[SalesTerritoryCountry],
+			            ", "
+			        ),
+			        CountriesCount > 2, 
+			            VAR Top2Countries = TOPN(
+			                2,
+			                SelectedCountriesTable,
+			                'dim SalesTerritory'[SalesTerritoryCountry],
+			                ASC
+			            )
+			            RETURN
+			                CONCATENATEX(
+			                    Top2Countries,
+			                    'dim SalesTerritory'[SalesTerritoryCountry],
+			                    ", "
+			                ) & ", etc.", 
+			        "All countries" 
+			    )
+			-- 3. Year
+			
+			VAR YearText =
+			    IF(
+			        HASONEVALUE('dim Calendar'[Year]),
+			        FORMAT(
+			            SELECTEDVALUE('dim Calendar'[Year]),
+			            "0"
+			        ),
+			        "2023–2026"
+			    )
+			
+			
+			RETURN
+			
+			    " • " & MacroText
+			    & " • " & CountryText
+			    & " • " & YearText
+			
+			```
+		displayFolder: Viz Dynamic Titles
+		lineageTag: d66c29b8-f04c-4f99-a506-e06f8c06f4c4
+
+	column Measuretable
+		dataType: string
+		isHidden
+		displayFolder: Viz
+		lineageTag: e0d35299-eb84-44b4-9b68-f392dcf5e705
+		summarizeBy: none
+		sourceColumn: Measuretable
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Measuretable = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Measuretable", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

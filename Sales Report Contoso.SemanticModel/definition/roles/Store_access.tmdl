@@ -1,0 +1,12 @@
+role Store_access
+	modelPermission: read
+
+	tablePermission 'dim Store' = ```
+			'dim Store'[StoreKey] in 
+			CALCULATETABLE(VALUES(Security_Store_RLS[StoreCode]),
+			Security_Store_RLS[UserEmail]=USERPRINCIPALNAME()
+			)
+			```
+
+	annotation PBI_Id = 6c825298282f4b0097707a5ffba340e6
+

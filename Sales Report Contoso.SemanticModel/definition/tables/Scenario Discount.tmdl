@@ -1,0 +1,27 @@
+table 'Scenario Discount'
+	lineageTag: 3fe4e077-468f-43da-8e1f-033896d5fcf1
+
+	measure 'Discount Scenario Value' = SELECTEDVALUE('Scenario Discount'[Discount Scenario])
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: c377ec5a-d3ae-417e-a45e-a4f4237ef3bc
+
+	column 'Discount Scenario'
+		dataType: double
+		formatString: 0
+		lineageTag: 99b12ffe-8d57-4539-aea2-70fbee079c97
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+	partition 'Scenario Discount' = calculated
+		mode: import
+		source = GENERATESERIES(0, 0.35, 0.01)
+
+	annotation PBI_Id = 1462b0b90aff4dfa87f4099cdcdc0b77
+

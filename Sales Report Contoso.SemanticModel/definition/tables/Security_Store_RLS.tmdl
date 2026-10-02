@@ -1,0 +1,34 @@
+table Security_Store_RLS
+	lineageTag: b114695c-7ef6-4541-a141-06fa50ca7626
+
+	column UserEmail
+		dataType: string
+		lineageTag: ff899602-ac25-445e-b817-58ad27058943
+		summarizeBy: none
+		sourceColumn: UserEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreCode
+		dataType: int64
+		formatString: 0
+		lineageTag: e5a9b7a5-e09d-454b-9edd-aaec22324bd3
+		summarizeBy: none
+		sourceColumn: StoreCode
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Security_Store_RLS = m
+		mode: import
+		queryGroup: 04_Support
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+				    dbo_v_Security_Store_RLS = Source{[Schema="dbo",Item="v_Security_Store_RLS"]}[Data]
+				in
+				    dbo_v_Security_Store_RLS
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

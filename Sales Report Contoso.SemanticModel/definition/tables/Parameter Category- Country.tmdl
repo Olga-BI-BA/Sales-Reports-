@@ -1,0 +1,48 @@
+table 'Parameter Category- Country'
+	lineageTag: fd0c718b-3686-4346-b707-2caeb2e4374c
+
+	column 'Parameter Category- Country'
+		lineageTag: cc34a7c0-ce54-4766-abe2-c81fd0ebe261
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter Category- Country Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter Category- Country Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Category- Country Fields'
+		isHidden
+		lineageTag: a2f26da7-ac3e-4287-82e0-480a4fe42936
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter Category- Country Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Category- Country Order'
+		isHidden
+		formatString: 0
+		lineageTag: aace0ead-db9f-445f-b9a0-6aed085fc500
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Parameter Category- Country' = calculated
+		mode: import
+		source =
+				{
+				    ("Country", NAMEOF('dim SalesTerritory'[SalesTerritoryCountry]), 1),
+				    ("Category", NAMEOF('dim Product'[Category]), 0)
+				}
+
+	annotation PBI_Id = ec9ac3ffd5a147149516b117d4d3ad0a
+

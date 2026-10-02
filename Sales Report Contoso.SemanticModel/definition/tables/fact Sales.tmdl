@@ -1,0 +1,222 @@
+table 'fact Sales'
+	lineageTag: fdac7702-e26c-4ad5-ae22-0cd8eeaa1a9e
+
+	column SalesKey
+		dataType: int64
+		formatString: 0
+		lineageTag: afcc386d-2f20-42fc-92ff-114cd3fee52e
+		summarizeBy: count
+		sourceColumn: SalesKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column DateKey
+		dataType: dateTime
+		formatString: dd.mm.yyyy
+		lineageTag: 4c65410b-8e9b-49c7-a23d-8f4f33da7ae7
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column channelKey
+		dataType: int64
+		formatString: 0
+		lineageTag: cbf88fc3-6f7f-439a-9b38-ae2659bd4185
+		summarizeBy: none
+		sourceColumn: channelKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreKey
+		dataType: int64
+		formatString: 0
+		lineageTag: d8bc80d4-6c1f-46d3-b58b-1531f20352e5
+		summarizeBy: none
+		sourceColumn: StoreKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 1aa85b90-e42a-44ad-8f0f-4497e1a1ea4a
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column PromotionKey
+		dataType: int64
+		formatString: 0
+		lineageTag: b89c3641-29ba-4046-a9a4-2453b8610a08
+		summarizeBy: none
+		sourceColumn: PromotionKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrencyKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 9e2b5d5e-86f2-47cd-ae47-0f3f04e58cec
+		summarizeBy: none
+		sourceColumn: CurrencyKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitCost
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 8278a99f-8453-4586-bb0b-05e2b4c3fbb3
+		summarizeBy: sum
+		sourceColumn: UnitCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column UnitPrice
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 1cfa54c7-76e7-4e31-8114-9e1b3935e8e9
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesQuantity
+		dataType: int64
+		formatString: 0
+		lineageTag: c326707b-859a-46f1-bf4d-393cfcf7009d
+		summarizeBy: sum
+		sourceColumn: SalesQuantity
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation __PBI_SemanticLinks = [{"LinkTarget":{"TableName":"fact Sales","TableItemName":"SalesQuantity (bins)","ObjectType":4},"LinkType":"UsedInGroup"}]
+
+	column ReturnQuantity
+		dataType: double
+		formatString: 0
+		lineageTag: 573ea024-734f-4dfb-ab53-d063cdd487f6
+		summarizeBy: sum
+		sourceColumn: ReturnQuantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReturnAmount
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 86d347da-2f4f-4994-844c-1d9836d1a3a7
+		summarizeBy: sum
+		sourceColumn: ReturnAmount
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiscountQuantity
+		dataType: int64
+		formatString: 0
+		lineageTag: f0265715-4122-4179-ae7a-15abba5361ec
+		summarizeBy: sum
+		sourceColumn: DiscountQuantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiscountAmount
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: e0e15467-0ad7-4002-b016-cc9ab7d88c82
+		summarizeBy: sum
+		sourceColumn: DiscountAmount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column TotalCost
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 3c15a547-3b28-408b-8911-d5d2c355b346
+		summarizeBy: sum
+		sourceColumn: TotalCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column SalesAmount
+		dataType: double
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 758bb58d-30e2-4424-8b1f-3ddd8e0520b3
+		summarizeBy: sum
+		sourceColumn: SalesAmount
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'SalesQuantity (bins)' =
+			VAR __Count = 301
+			
+			VAR __Min = MIN('fact Sales'[SalesQuantity])
+			
+			VAR __Max = MAX('fact Sales'[SalesQuantity])
+			
+			VAR __Difference = (__Max - __Min)
+			
+			VAR __Size = IF(__Difference > 0, __Difference / __Count, 1)
+			
+			VAR __BinNumber = INT(('fact Sales'[SalesQuantity] - __Min) / __Size)
+			
+			RETURN
+				IF(
+					ISBLANK('fact Sales'[SalesQuantity]),
+					BLANK(),
+					__Min + (MIN(__BinNumber, __Count - 1) * __Size)
+				)
+		lineageTag: 6b35deaf-3107-465a-8313-a964a228971b
+		summarizeBy: none
+
+		extendedProperty GroupingMetadata =
+				{
+				  "version": 0,
+				  "groupedColumns": [
+				    {
+				      "Column": {
+				        "Expression": {
+				          "SourceRef": {
+				            "Entity": "fact Sales"
+				          }
+				        },
+				        "Property": "SalesQuantity"
+				      }
+				    }
+				  ]
+				}
+
+		annotation GroupingDesignState = {"Version":0,"Sources":[{"Name":"f","Entity":"fact Sales"}],"GroupedColumns":[{"Column":{"Expression":{"SourceRef":{"Source":"f"}},"Property":"SalesQuantity"}}],"BinItem":{"Expression":{"Member":{"Expression":{"Discretize":{"Expression":{"Column":{"Expression":{"SourceRef":{"Source":"f"}},"Property":"SalesQuantity"}},"Count":301}},"Member":"Min"}}}}
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'fact Sales' = m
+		mode: import
+		queryGroup: 01_Fact
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+				    dbo_FactSales = Source{[Schema="dbo",Item="FactSales"]}[Data],
+				    #"Multiplied Column" = Table.TransformColumns(dbo_FactSales, {{"ReturnQuantity", each _ * 2, type number}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Multiplied Column",{"DimStore", "DimPromotion", "DimProduct", "DimDate", "DimCurrency", "ETLLoadID", "LoadDate", "UpdateDate", "DimChannel"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Removed Columns",{{"DateKey", type date}}),
+				    #"Appended Query1" = Table.Combine({#"Changed Type", #"fact Sales 2024-2026"})
+				in
+				    #"Appended Query1"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

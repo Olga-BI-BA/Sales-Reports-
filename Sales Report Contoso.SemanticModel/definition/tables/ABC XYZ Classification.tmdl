@@ -1,0 +1,215 @@
+table 'ABC XYZ Classification'
+	lineageTag: 46c3e3e4-9624-47e7-ace4-ee96c25eaed1
+
+	column Year
+		formatString: 0
+		lineageTag: 53e98532-c732-4dc4-b0b4-01b0d66626b0
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: dim Calendar[Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		formatString: 0
+		lineageTag: f9d345ac-e298-407d-a6e1-06d125398078
+		summarizeBy: count
+		isNameInferred
+		sourceColumn: fact Sales[ProductKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Units Sold'
+		formatString: 0
+		lineageTag: c6c1526f-062f-46f9-a06b-1f25d32f25a6
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Units Sold]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Revenue
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 037819cd-60fe-4199-8a02-90b348233127
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Revenue]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'StdDev Sales'
+		formatString: 0.00
+		lineageTag: 5aa904cc-eb77-4279-8f60-d2876aefebd6
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [StdDev Sales]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Months With Sales'
+		formatString: 0
+		lineageTag: 65e775ee-2b56-4e08-9dd7-2f294b0b4ba2
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Months With Sales]
+
+		annotation SummarizationSetBy = Automatic
+
+	column CV
+		formatString: 0.000
+		lineageTag: 2fcb01ae-bf17-4166-98e2-a5f47d34bfdb
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [CV]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'XYZ Class'
+		lineageTag: 033112e0-b6ba-4b8e-99f9-513cfa397f7e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [XYZ Class]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cum Revenue Pct'
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
+		lineageTag: e254424a-8c69-4898-b969-1d950761a8ae
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Cum Revenue Pct]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ABC Class'
+		lineageTag: 0090bf84-b0b5-4158-9230-a7ba2d407907
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ABC Class]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ABC XYZ'
+		lineageTag: b8d284f6-3300-40fc-8a9b-0af9b086d47d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [ABC XYZ]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Avg Sales Qty'
+		lineageTag: de73ac5b-ae8a-4614-948e-269c3bff2458
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Avg Sales Qty]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'ABC XYZ Classification' = calculated
+		mode: import
+		source =
+				
+				VAR MonthlyDemand =
+				    ADDCOLUMNS (
+				        SUMMARIZE (
+				            'fact Sales',
+				            'dim Calendar'[Year],
+				            'fact Sales'[ProductKey],
+				            'dim Calendar'[Month]
+				        ),
+				        "Monthly Qty",
+				            CALCULATE (
+				                SUM ( 'fact Sales'[SalesQuantity] ) - SUM ( 'fact Sales'[ReturnQuantity] )
+				            )
+				    )
+				VAR YearProductStats =
+				    ADDCOLUMNS (
+				        SUMMARIZE ( MonthlyDemand, [Year], [ProductKey] ),
+				        "Units Sold",
+				            CALCULATE (
+				                SUM ( 'fact Sales'[SalesQuantity] ) - SUM ( 'fact Sales'[ReturnQuantity] )
+				            ),
+				        "Revenue",
+				            CALCULATE (
+				                SUM ( 'fact Sales'[SalesAmount] ) - SUM ( 'fact Sales'[ReturnAmount] )
+				            ),
+				        "Avg Sales Qty",
+				            VAR curYear = [Year]
+				            VAR curProduct = [ProductKey]
+				            VAR filteredMonths =
+				                FILTER ( MonthlyDemand, [Year] = curYear && [ProductKey] = curProduct )
+				            RETURN AVERAGEX ( filteredMonths, [Monthly Qty] ),
+				        "StdDev Sales",
+				            VAR curYear = [Year]
+				            VAR curProduct = [ProductKey]
+				            VAR filteredMonths =
+				                FILTER ( MonthlyDemand, [Year] = curYear && [ProductKey] = curProduct )
+				            RETURN STDEVX.P ( filteredMonths, [Monthly Qty] ),
+				        "Months With Sales",
+				            VAR curYear = [Year]
+				            VAR curProduct = [ProductKey]
+				            RETURN
+				                COUNTROWS (
+				                    FILTER ( MonthlyDemand, [Year] = curYear && [ProductKey] = curProduct )
+				                )
+				    )
+				VAR WithCV =
+				    ADDCOLUMNS (
+				        YearProductStats,
+				        "CV", DIVIDE ( [StdDev Sales], [Avg Sales Qty] )
+				    )
+				VAR WithXYZ =
+				    ADDCOLUMNS (
+				        WithCV,
+				        "XYZ Class",
+				            SWITCH (
+				                TRUE (),
+				                [Months With Sales] < 3, "Sparse",
+				                ISBLANK ( [CV] ), "Dormant",
+				                [CV] <= 0.19, "X",
+				                [CV] <= 0.24, "Y",
+				                "Z"
+				            )
+				    )
+				VAR WithCumulative =
+				    ADDCOLUMNS (
+				        WithXYZ,
+				        "Cum Revenue Pct",
+				            VAR curYear = [Year]
+				            VAR curKey = [ProductKey]
+				            VAR curRev = [Revenue]
+				            VAR sameYear = FILTER ( WithXYZ, [Year] = curYear )
+				            VAR yearTotal = SUMX ( sameYear, [Revenue] )
+				            VAR runningTotal =
+				                SUMX (
+				                    FILTER (
+				                        sameYear,
+				                        [Revenue] > curRev
+				                            || ( [Revenue] = curRev && [ProductKey] <= curKey )
+				                    ),
+				                    [Revenue]
+				                )
+				            RETURN DIVIDE ( runningTotal, yearTotal )
+				    )
+				VAR WithABC =
+				    ADDCOLUMNS (
+				        WithCumulative,
+				        "ABC Class",
+				            SWITCH (
+				                TRUE (),
+				                [Revenue] <= 0, "C",
+				                [Cum Revenue Pct] <= 0.80, "A",
+				                [Cum Revenue Pct] <= 0.95, "B",
+				                "C"
+				            )
+				    )
+				RETURN
+				    ADDCOLUMNS (
+				        WithABC,
+				        "ABC XYZ", [ABC Class] & [XYZ Class]
+				    )
+
+	annotation PBI_Id = a087073f92e34835b1a02241ba0ea508
+

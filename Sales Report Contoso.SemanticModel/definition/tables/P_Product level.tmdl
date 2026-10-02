@@ -1,0 +1,50 @@
+table 'P_Product level'
+	lineageTag: d2fe7810-1497-41d2-a83b-ece977355e9f
+
+	column Parameter
+		lineageTag: 30fea533-44c6-4c1e-9093-bdbb21729f27
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Fields'
+		isHidden
+		lineageTag: 3a682455-d109-42e8-bf6d-15d972fc6220
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter Order'
+		isHidden
+		formatString: 0
+		lineageTag: 8870b6ca-a37c-4626-a95d-e6b39e093d0c
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'P_Product level' = calculated
+		mode: import
+		source =
+				{
+				    ("Category", NAMEOF('dim Product'[Category]), 0),
+				    ("Subcategory", NAMEOF('dim Product'[Subcategory]), 1),
+				    ("Brand", NAMEOF('dim Product'[Brand]), 2),
+				    ("Color", NAMEOF('dim Product'[Color]), 3)
+				}
+
+	annotation PBI_Id = a0aff08b08b546d093ea996b97bfd5d7
+

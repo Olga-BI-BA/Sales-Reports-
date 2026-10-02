@@ -1,0 +1,151 @@
+table 'XYZ Classification'
+	isHidden
+	lineageTag: eecf4ad4-6ed5-4164-9155-e83ae16e850c
+
+	column 'Avg Units Sold'
+		isHidden
+		formatString: 0.00
+		lineageTag: 2335c905-6fd6-443d-aeec-d6ef45c23492
+		summarizeBy: sum
+		sourceColumn: [Avg Sales]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Classification
+		isHidden
+		lineageTag: 465a3de3-81ee-4a74-8e5e-6200224cdd80
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Classification]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		isHidden
+		lineageTag: d73c6e86-e2cf-4f5b-bc50-97bde47c514a
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: dim Calendar[Year]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ProductKey
+		isHidden
+		formatString: 0
+		lineageTag: b1e6bbba-adda-4efd-b3b6-a2bdb6c5ad08
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: fact Sales[ProductKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'StdDev Sales'
+		isHidden
+		formatString: 0.00
+		lineageTag: 9edc2518-00d2-441c-a44b-84c3739620aa
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [StdDev Sales]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Months With Sales'
+		isHidden
+		formatString: 0
+		lineageTag: 51299414-282d-4e40-a799-ff6c4f1e844d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Months With Sales]
+
+		annotation SummarizationSetBy = Automatic
+
+	column CV
+		isHidden
+		formatString: 0.000
+		lineageTag: 9883f1c7-bd03-4818-8ed4-75abb7694232
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [CV]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Units Sold'
+		isHidden
+		lineageTag: 0e9740ba-d2b1-4bf3-b320-77e4cb61fd90
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Units Sold]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'XYZ Classification' = calculated
+		mode: import
+		source = ```
+				
+				VAR MonthlyDemand =
+				    ADDCOLUMNS(
+				        SUMMARIZE(
+				            'fact Sales',
+				            'dim Calendar'[Year],
+				            'fact Sales'[ProductKey],
+				            'dim Calendar'[Month]
+				        ),
+				        "Monthly Qty", 
+				            CALCULATE(
+				                SUM('fact Sales'[SalesQuantity]) - SUM('fact Sales'[ReturnQuantity])
+				            )
+				    )
+				VAR YearProductStats =
+				    ADDCOLUMNS(
+				        SUMMARIZE(MonthlyDemand, [Year], [ProductKey]),
+				        "Units Sold", 
+				            CALCULATE(
+				                SUM('fact Sales'[SalesQuantity]) - SUM('fact Sales'[ReturnQuantity])
+				            ),
+				        "Avg Sales",
+				            VAR curYear = [Year]
+				            VAR curProduct = [ProductKey]
+				            VAR filteredMonths = 
+				                FILTER(MonthlyDemand, [Year] = curYear && [ProductKey] = curProduct)
+				            RETURN AVERAGEX(filteredMonths, [Monthly Qty]),
+				        "StdDev Sales",
+				            VAR curYear = [Year]
+				            VAR curProduct = [ProductKey]
+				            VAR filteredMonths = 
+				                FILTER(MonthlyDemand, [Year] = curYear && [ProductKey] = curProduct)
+				            RETURN STDEVX.P(filteredMonths, [Monthly Qty]),
+				        "Months With Sales",
+				            VAR curYear = [Year]
+				            VAR curProduct = [ProductKey]
+				            RETURN 
+				                COUNTROWS(
+				                    FILTER(MonthlyDemand, [Year] = curYear && [ProductKey] = curProduct)
+				                )
+				    )
+				VAR WithCV =
+				    ADDCOLUMNS(
+				        YearProductStats,
+				        "CV", DIVIDE([StdDev Sales], [Avg Sales])
+				    )
+				VAR WithClass =
+				    ADDCOLUMNS(
+				        WithCV,
+				        "Classification",
+				        SWITCH(
+				            TRUE(),
+				            [Months With Sales] < 3, "Z",
+				            ISBLANK([CV]), "Z",
+				            [CV] <= 0.10, "X",
+				            [CV] <= 0.25, "Y",
+				            "Z"
+				        )
+				    )
+				RETURN WithClass
+				```
+
+	annotation PBI_Id = 2964f3aee14e44549fac08c381eaa20d
+

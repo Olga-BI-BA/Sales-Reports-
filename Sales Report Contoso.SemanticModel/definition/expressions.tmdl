@@ -1,0 +1,130 @@
+expression 'dim Product original' =
+		let
+		    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+		    dbo_DimProduct = Source{[Schema="dbo",Item="DimProduct"]}[Data]
+		in
+		    dbo_DimProduct
+	lineageTag: 75c5b6a8-438b-47d7-9e5c-c96924027941
+	queryGroup: 00_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'dim ProductSubcategory' =
+		let
+		    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+		    dbo_DimProductSubcategory = Source{[Schema="dbo",Item="DimProductSubcategory"]}[Data]
+		in
+		    dbo_DimProductSubcategory
+	lineageTag: fbac3b53-9942-4dfd-b2e1-c8b7a8a45dab
+	queryGroup: 00_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'dim ProductCategory' =
+		let
+		    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+		    dbo_DimProductCategory = Source{[Schema="dbo",Item="DimProductCategory"]}[Data]
+		in
+		    dbo_DimProductCategory
+	lineageTag: d43048cf-f34b-4e7d-8325-94c72b3ad621
+	queryGroup: 00_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'dim Geo original' =
+		let
+		    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+		    dbo_DimGeography = Source{[Schema="dbo",Item="DimGeography"]}[Data]
+		in
+		    dbo_DimGeography
+	lineageTag: 380e0d0c-ef33-48f2-8553-9b6fb46e0d18
+	queryGroup: 00_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'dim Customer' =
+		let
+		    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+		    dbo_V_Customer = Source{[Schema="dbo",Item="V_Customer"]}[Data]
+		in
+		    dbo_V_Customer
+	lineageTag: 6d45416a-ba00-4715-8e81-16d93a531f40
+	queryGroup: 02_Dimentions
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'dim Calendar 2026 Model' =
+		let
+		    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW", [Query="SELECT *  FROM [ContosoRetailDW].[dbo].[DimDate] where calendaryear >2022#(lf)"]),
+		    #"Added Custom" = Table.AddColumn(Source, "Date Model", each Date.AddYears ([Datekey],1)),
+		    #"Filtered Rows" = Table.SelectRows(#"Added Custom", each ([CalendarYear] = 2025)),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"Date Model", type date}}),
+		    #"Reordered Columns" = Table.ReorderColumns(#"Changed Type",{"Date Model", "Datekey", "FullDateLabel", "DateDescription", "CalendarYear", "CalendarYearLabel", "CalendarHalfYear", "CalendarHalfYearLabel", "CalendarQuarter", "CalendarQuarterLabel", "CalendarMonth", "CalendarMonthLabel", "CalendarWeek", "CalendarWeekLabel", "CalendarDayOfWeek", "CalendarDayOfWeekLabel", "FiscalYear", "FiscalYearLabel", "FiscalHalfYear", "FiscalHalfYearLabel", "FiscalQuarter", "FiscalQuarterLabel", "FiscalMonth", "FiscalMonthLabel", "IsWorkDay", "IsHoliday", "HolidayName", "EuropeSeason", "NorthAmericaSeason", "AsiaSeason"}),
+		    #"Replaced Value" = Table.ReplaceValue(#"Reordered Columns","2009","2026",Replacer.ReplaceText,{"FullDateLabel"}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Replaced Value",{"DateDescription"}),
+		    #"Replaced Value1" = Table.ReplaceValue(#"Removed Columns",2025,2026,Replacer.ReplaceValue,{"CalendarYear"}),
+		    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","2009","2026",Replacer.ReplaceText,{"CalendarYearLabel"}),
+		    #"Removed Columns1" = Table.RemoveColumns(#"Replaced Value2",{"CalendarHalfYear", "CalendarQuarter", "CalendarMonth", "CalendarWeek", "CalendarDayOfWeek"}),
+		    #"Replaced Value3" = Table.ReplaceValue(#"Removed Columns1",2009,2026,Replacer.ReplaceValue,{"FiscalYear"}),
+		    #"Replaced Value4" = Table.ReplaceValue(#"Replaced Value3","2009","2026",Replacer.ReplaceText,{"FiscalYearLabel"}),
+		    #"Removed Columns2" = Table.RemoveColumns(#"Replaced Value4",{"FiscalHalfYear", "FiscalMonth", "Datekey"}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns2",{{"CalendarYear", "Year"}, {"CalendarYearLabel", "YearLabel"}, {"CalendarHalfYearLabel", "HalfYear"}, {"CalendarQuarterLabel", "Quarter"}}),
+		    #"Added Custom1" = Table.AddColumn(#"Renamed Columns", "WeekDay sh", each Text.Start(Date.DayOfWeekName([Date Model], "en-US"), 3)),
+		    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom1",{{"WeekDay sh", type text}}),
+		    #"Added Custom2" = Table.AddColumn(#"Changed Type1", "Month abbr", each Text.Start(Date.MonthName([Date Model],"en-US"),3)),
+		    #"Changed Type3" = Table.TransformColumnTypes(#"Added Custom2",{{"Month abbr", type text}}),
+		    #"Renamed Columns1" = Table.RenameColumns(#"Changed Type3",{{"WeekDay sh", "WeekDay abbr"}, {"CalendarMonthLabel", "Month"}, {"CalendarWeekLabel", "WeekLabel"}}),
+		    #"Reordered Columns1" = Table.ReorderColumns(#"Renamed Columns1",{"Date Model", "FullDateLabel", "Year", "YearLabel", "HalfYear", "Quarter", "Month", "WeekLabel", "CalendarDayOfWeekLabel", "FiscalYear", "FiscalYearLabel", "FiscalHalfYearLabel", "FiscalQuarter", "FiscalQuarterLabel", "FiscalMonthLabel", "IsWorkDay", "IsHoliday", "HolidayName", "EuropeSeason", "NorthAmericaSeason", "AsiaSeason", "Month abbr", "WeekDay abbr"}),
+		    #"Added Custom3" = Table.AddColumn(#"Reordered Columns1", "MonNum", each Date.Month ([Date Model])),
+		    #"Changed Type2" = Table.TransformColumnTypes(#"Added Custom3",{{"MonNum", Int64.Type}}),
+		    #"Reordered Columns2" = Table.ReorderColumns(#"Changed Type2",{"Date Model", "FullDateLabel", "Year", "YearLabel", "HalfYear", "Quarter", "Month", "Month abbr", "MonNum", "WeekLabel", "CalendarDayOfWeekLabel", "WeekDay abbr", "FiscalYear", "FiscalYearLabel", "FiscalHalfYearLabel", "FiscalQuarter", "FiscalQuarterLabel", "FiscalMonthLabel", "IsWorkDay", "IsHoliday", "HolidayName", "EuropeSeason", "NorthAmericaSeason", "AsiaSeason"}),
+		    #"Filtered Rows1" = Table.SelectRows(#"Reordered Columns2", each true),
+		    #"Removed Columns3" = Table.RemoveColumns(#"Filtered Rows1",{"HolidayName"}),
+		    #"Renamed Columns2" = Table.RenameColumns(#"Removed Columns3",{{"MonNum", "Month No"}}),
+		    #"Removed Columns4" = Table.RemoveColumns(#"Renamed Columns2",{"FiscalQuarter"}),
+		    #"Renamed Columns3" = Table.RenameColumns(#"Removed Columns4",{{"CalendarDayOfWeekLabel", "Week Day"}, {"Date Model", "Date"}})
+		in
+		    #"Renamed Columns3"
+	lineageTag: ce015324-bc49-445a-ab0e-a3eb08f856a5
+	queryGroup: 00_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'fact Sales 2024-2026' =
+		let
+		    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+		    dbo_FactSales = Source{[Schema="dbo",Item="FactSales"]}[Data],
+		    #"Multiplied Column" = Table.TransformColumns(dbo_FactSales, {{"ReturnQuantity", each _ * 2, type number}}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Multiplied Column",{"DimStore", "DimPromotion", "DimProduct", "DimDate", "DimCurrency", "ETLLoadID", "LoadDate", "UpdateDate", "DimChannel"}),
+		    #"Added Custom" = Table.AddColumn(#"Removed Columns", "Date Custom", each Date.AddYears ([DateKey],1)),
+		    #"Removed Columns1" = Table.RemoveColumns(#"Added Custom",{"DateKey"}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns1",{{"Date Custom", "DateKey"}}),
+		    #"Filtered Rows" = Table.SelectRows(#"Renamed Columns", each [DateKey] >= #datetime(2026, 1, 1, 0, 0, 0) and [DateKey] <= #datetime(2026, 8, 21, 0, 0, 0)),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"DateKey", type date}}),
+		    #"Reordered Columns" = Table.ReorderColumns(#"Changed Type",{"SalesKey", "DateKey", "channelKey", "StoreKey", "ProductKey", "PromotionKey", "CurrencyKey", "UnitCost", "UnitPrice", "SalesQuantity", "ReturnQuantity", "ReturnAmount", "DiscountQuantity", "DiscountAmount", "TotalCost", "SalesAmount"}),
+		    #"Added Custom1" = Table.AddColumn(#"Reordered Columns", "Custom", each [SalesAmount]*1.15),
+		    #"Renamed Columns1" = Table.RenameColumns(#"Added Custom1",{{"Custom", "SalesAmount_"}}),
+		    #"Changed Type1" = Table.TransformColumnTypes(#"Renamed Columns1",{{"SalesAmount_", Currency.Type}}),
+		    #"Renamed Columns2" = Table.RenameColumns(#"Changed Type1",{{"SalesAmount", "SalesAmount_old"}, {"SalesAmount_", "SalesAmount"}}),
+		    #"Removed Columns2" = Table.RemoveColumns(#"Renamed Columns2",{"SalesAmount_old"})
+		in
+		    #"Removed Columns2"
+	lineageTag: af18cf8f-99fb-4af2-9aa5-934b1589fdee
+	queryGroup: 00_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

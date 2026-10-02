@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "23321c639d5184de6729",
+  "position": {
+    "x": 678.00188501413766,
+    "y": 110.98963242224318,
+    "z": 14000,
+    "height": 49.46277097078228,
+    "width": 400.52780395852972,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Select a metric, click on macroregions, categories and countries to see its in other visuals",
+                    "textStyle": {
+                      "fontStyle": "italic",
+                      "color": "#b3b3b3"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

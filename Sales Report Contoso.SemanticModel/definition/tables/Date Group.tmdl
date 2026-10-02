@@ -1,0 +1,134 @@
+table 'Date Group'
+	lineageTag: cda1ef6e-d247-4af3-99d8-85f931206a59
+
+	measure 'Dynamic Value for Date Group' = ```
+			
+			VAR SelectedDateGroup = SELECTEDVALUE('Date Group'[Date Group], "Daily")
+			VAR MaxDate = [Last Sale Date]
+			----VAR MaxDate = MAX('dim Calendar'[Date])
+			VAR StartOfWeekDate = MaxDate - WEEKDAY(MaxDate, 2) + 1
+			VAR PeriodValue =
+			    SWITCH(
+			        SelectedDateGroup,
+			        "Daily", [Cockpit Selected Metric Value],
+			        "DailyPY",     CALCULATE([Cockpit Selected Metric Value], SAMEPERIODLASTYEAR('dim Calendar'[Date])),
+			        "WTD",    CALCULATE([Cockpit Selected Metric Value], DATESBETWEEN('dim Calendar'[Date], StartOfWeekDate, MaxDate)),
+			        "WTDPY",  CALCULATE([Cockpit Selected Metric Value], DATESBETWEEN('dim Calendar'[Date], StartOfWeekDate - 364, MaxDate - 364)),
+			        "MTD",    CALCULATE([Cockpit Selected Metric Value], DATESMTD('dim Calendar'[Date])),
+			        "MTDPY",  CALCULATE([Cockpit Selected Metric Value], DATESMTD(SAMEPERIODLASTYEAR('dim Calendar'[Date]))),
+			        "QTD",    CALCULATE([Cockpit Selected Metric Value], DATESQTD('dim Calendar'[Date])),
+			        "QTDPY",  CALCULATE([Cockpit Selected Metric Value], DATESQTD(SAMEPERIODLASTYEAR('dim Calendar'[Date]))),
+			        "YTD",    CALCULATE([Cockpit Selected Metric Value], DATESYTD('dim Calendar'[Date])),
+			        "YTDPY",  CALCULATE([Cockpit Selected Metric Value], SAMEPERIODLASTYEAR(DATESYTD('dim Calendar'[Date])))
+			    )
+			RETURN 
+			PeriodValue
+			```
+		lineageTag: 9ddad53a-de3f-4c24-9566-d4ac035c8331
+
+		formatStringDefinition = [Dynamic Format Daily Cockpit]
+
+	measure 'Cockpit Selected Metric Value' =
+			
+			SWITCH(
+			    SELECTEDVALUE('Metric Selection'[Metric Selection]),
+			    "Net Revenue",        [Net Revenue],
+			    "Gross Profit",       [Gross Profit],
+			    "Gross Margin",       [Gross Margin],
+			    "# Active SKUs",      [Selling SKUs],
+			    "Discount Depth",     [Discount Depth],
+			    "Cost of Goods",      [COGS],
+			    "Total Returns",      [Total Returns],
+			    "YoY Revenue Growth", [YoY Revenue %]
+			)
+		lineageTag: 22eb5f90-2469-4f68-abcf-27fa941bf1e1
+
+	measure 'Dynamic Format Daily Cockpit' = ```
+			
+			
+			
+			-- 1. Получаем значение ОРИГИНАЛЬНОЙ меры, которая сейчас считается на визуале
+			VAR CurrentValue = [Dynamic Value for Date Group] 
+			
+			-- 2. Проверяем, какая метрика выбрана
+			VAR SelectedMetric = SELECTEDVALUE('Metric Selection'[Metric Selection])
+			
+			RETURN
+			    SWITCH(
+			        SelectedMetric,
+			        -- Для денег мы берем само число, округляем его до целого с помощью ROUND 
+			        -- и превращаем в текст с ручным добавлением знака $
+			        "Net Revenue",        """" & IF(CurrentValue < 0, "-", "") & "$" & FORMAT(ROUND(ABS(CurrentValue), 0), "#,##0") & """",
+			        "Gross Profit",       """" & IF(CurrentValue < 0, "-", "") & "$" & FORMAT(ROUND(ABS(CurrentValue), 0), "#,##0") & """",
+			        "Cost of Goods",      """" & IF(CurrentValue < 0, "-", "") & "$" & FORMAT(ROUND(ABS(CurrentValue), 0), "#,##0") & """",
+			        "Total Returns",      """" & IF(CurrentValue < 0, "-", "") & "$" & FORMAT(ROUND(ABS(CurrentValue), 0), "#,##0") & """",
+			        
+			        -- Проценты отдаем стандартной маске
+			        "Gross Margin",       "0.00%;-0.00%",
+			        "Discount Depth",     "0.00%;-0.00%",
+			        "YoY Revenue Growth", "0.00%;-0.00%",
+			        
+			         -- Количество SKU (принудительно округляем до целого БЕЗ знака $)
+			        "# Active SKUs",      """" & IF(CurrentValue < 0, "-", "") & FORMAT(ROUND(ABS(CurrentValue), 0), "#,##0") & """",
+			        -- дефолт
+			        
+			        "#,##0"
+			    )
+			
+			
+			
+			---SWITCH(
+			  ---SELECTEDVALUE('Metric Selection'[Metric Selection]),
+			  --- "Net Revenue",        "$#,##0.;-$#,##0.",
+			   ----"Gross Profit",        "$#,##0;-$#,##0",
+			   --- "Cost of Goods",       "$#,##0;-$#,##0",
+			   --- "Total Returns",       "$#,##0;-$#,##0",
+			   --- "Gross Margin",        "0.00%;-0.00%",
+			   --- "Discount Depth",      "0.00%;-0.00%",
+			   --- "YoY Revenue Growth",  "0.00%;-0.00%",
+			    --- "# Active SKUs",       "#,##0",
+			 ---"#,##0"
+			---)
+			```
+		lineageTag: 51190707-d36c-490a-b6e7-6f4f2fcdc953
+
+	column 'Date Group'
+		lineageTag: f2d268b0-7ad0-452e-b766-2b36178ba46f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date Group]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		formatString: 0
+		lineageTag: 27e5c6bc-ac94-4430-b69f-c3ac67cc082d
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Date Group' = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Date Group", STRING,
+				    "Sort Order", INTEGER,
+				    {
+				        {"Daily", 1},
+				        {"DailyPY", 2},
+				        {"WTD", 3},
+				        {"WTDPY", 4},
+				        {"MTD", 5},
+				        {"MTDPY", 6},
+				        {"QTD", 7},
+				        {"QTDPY", 8},
+				        {"YTD", 9},
+				        {"YTDPY", 10}
+				    }
+				)
+
+	annotation PBI_Id = ababc81f3dbf43dda6fa0bc6d81fd099
+

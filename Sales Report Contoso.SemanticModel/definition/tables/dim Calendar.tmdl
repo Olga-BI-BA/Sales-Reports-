@@ -1,0 +1,302 @@
+table 'dim Calendar'
+	lineageTag: 1268a3ca-7db7-49a4-8c81-cefe4d35ba17
+
+	column Date
+		dataType: dateTime
+		formatString: dd.mm.yyyy
+		lineageTag: 7fd3590f-ab04-4987-92e6-4cc2b6e61152
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column FullDateLabel
+		dataType: string
+		isHidden
+		lineageTag: 81d2fec1-35bf-4b33-b750-1c5309ed54db
+		summarizeBy: none
+		sourceColumn: FullDateLabel
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: double
+		formatString: 0
+		lineageTag: b07ce548-ddfd-4036-8ff8-8821f73e85b0
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearLabel
+		dataType: string
+		lineageTag: 5a3baa18-66f3-4d9d-8e09-72d25fdbe38e
+		summarizeBy: none
+		sourceColumn: YearLabel
+
+		annotation SummarizationSetBy = Automatic
+
+	column HalfYear
+		dataType: string
+		isHidden
+		lineageTag: 222ebc27-6b65-42b9-bff7-347385b6294a
+		summarizeBy: none
+		sourceColumn: HalfYear
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: string
+		isHidden
+		lineageTag: c4fed45b-53a7-4e1a-86c9-d8cfe4daaf61
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: string
+		lineageTag: 7cdd8b1d-ef60-4183-9233-be8ea5ddd13c
+		summarizeBy: none
+		sourceColumn: Month
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekLabel
+		dataType: string
+		isHidden
+		lineageTag: a8ecf17d-cb25-42f5-b38f-d6a58dc9c5b3
+		summarizeBy: none
+		sourceColumn: WeekLabel
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYear
+		dataType: double
+		isHidden
+		formatString: 0
+		lineageTag: 761959c0-47fe-4fc6-9003-e9fd1fb7a64b
+		summarizeBy: sum
+		sourceColumn: FiscalYear
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYearLabel
+		dataType: string
+		isHidden
+		lineageTag: 86eea36c-759a-46c8-a5e7-aaff08853aff
+		summarizeBy: none
+		sourceColumn: FiscalYearLabel
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalQuarterLabel
+		dataType: string
+		isHidden
+		lineageTag: 3aeede93-3c2d-4283-a645-03c2a32e7667
+		summarizeBy: none
+		sourceColumn: FiscalQuarterLabel
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalMonthLabel
+		dataType: string
+		isHidden
+		lineageTag: 798f3b55-068e-4313-9898-717623eb2fd8
+		summarizeBy: none
+		sourceColumn: FiscalMonthLabel
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWorkDay
+		dataType: string
+		lineageTag: 19ab8e22-b066-46e0-b9a4-748436ea0501
+		summarizeBy: none
+		sourceColumn: IsWorkDay
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsHoliday
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 13f4c1d9-dbd1-47aa-85b2-0dcb31ede6ce
+		summarizeBy: sum
+		sourceColumn: IsHoliday
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column EuropeSeason
+		dataType: string
+		isHidden
+		lineageTag: d1b59348-b291-480c-8b3a-81f13bab03e9
+		summarizeBy: none
+		sourceColumn: EuropeSeason
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column NorthAmericaSeason
+		dataType: string
+		isHidden
+		lineageTag: 0920047d-466c-451c-8534-fc5405002aec
+		summarizeBy: none
+		sourceColumn: NorthAmericaSeason
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column AsiaSeason
+		dataType: string
+		lineageTag: ba8db866-2212-4a26-bcf1-ce9eb1d2b934
+		summarizeBy: none
+		sourceColumn: AsiaSeason
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalHalfYearLabel
+		dataType: string
+		lineageTag: 7dd09922-1a73-4041-b3f9-e9e3331d62a4
+		summarizeBy: none
+		sourceColumn: FiscalHalfYearLabel
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month abbr'
+		dataType: string
+		lineageTag: 46b2f738-2aea-41c3-b952-eb1a841c27e8
+		summarizeBy: none
+		sourceColumn: Month abbr
+		sortByColumn: 'Month No'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'WeekDay abbr'
+		dataType: string
+		lineageTag: cfe286cf-d42a-470f-a7a2-da89fb6b0c12
+		summarizeBy: none
+		sourceColumn: WeekDay abbr
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month No'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7e290bdc-8903-4195-a980-c8fcdcf9fe2c
+		summarizeBy: sum
+		sourceColumn: Month No
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Day'
+		dataType: string
+		lineageTag: 089794e6-3850-4c7f-a2b6-ce9633d684d0
+		summarizeBy: none
+		sourceColumn: Week Day
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Month' = FORMAT ( 'dim Calendar'[Date], "YYYY-MM" )
+		lineageTag: 947a3a7e-6981-4fb3-ad86-f70145d3f172
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Year Hierarchy'
+		lineageTag: 93ea1990-0ecc-49f9-b9b8-900713c2de75
+
+		level Year
+			lineageTag: 78289b56-5fb2-4f7e-8495-9e5a050dae7a
+			column: Year
+
+		level Quarter
+			lineageTag: ecb4eeb0-736c-4dac-abed-7306f3a89e06
+			column: Quarter
+
+		level 'Month abbr'
+			lineageTag: 22619089-b5e0-4fdb-bc32-45a68a8109e2
+			column: 'Month abbr'
+
+	partition 'dim Calendar' = m
+		mode: import
+		queryGroup: 02_Dimentions
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW", [Query="SELECT *  FROM [ContosoRetailDW].[dbo].[DimDate] where calendaryear >2022#(lf)"]),
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"DateDescription"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Removed Columns", each true),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Filtered Rows",{"HolidayName", "FiscalMonth"}),
+				    #"Filtered Rows1" = Table.SelectRows(#"Removed Columns1", each true),
+				    #"Replaced Value" = Table.ReplaceValue(#"Filtered Rows1","2007","2023",Replacer.ReplaceText,{"FullDateLabel"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","2008","2024",Replacer.ReplaceText,{"FullDateLabel"}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","2009","2025",Replacer.ReplaceText,{"FullDateLabel"}),
+				    #"Removed Columns2" = Table.RemoveColumns(#"Replaced Value2",{"CalendarHalfYear", "CalendarQuarter", "CalendarWeek", "CalendarDayOfWeek"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns2",{{"CalendarQuarterLabel", "Quarter"}, {"CalendarMonthLabel", "Month"}, {"CalendarHalfYearLabel", "HalfYear"}, {"CalendarYearLabel", "YearLabel"}, {"CalendarYear", "Year"}, {"CalendarWeekLabel", "WeekLabel"}}),
+				    #"Removed Columns3" = Table.RemoveColumns(#"Renamed Columns",{"FiscalHalfYear", "FiscalQuarter"}),
+				    #"Replaced Value3" = Table.ReplaceValue(#"Removed Columns3",2007,2023,Replacer.ReplaceValue,{"YearLabel", "FiscalYear", "FiscalYearLabel", "FiscalQuarterLabel"}),
+				    #"Replaced Value4" = Table.ReplaceValue(#"Replaced Value3",2008,2024,Replacer.ReplaceValue,{"FiscalYear"}),
+				    #"Replaced Value5" = Table.ReplaceValue(#"Replaced Value4",2009,2025,Replacer.ReplaceValue,{"FiscalYear"}),
+				    #"Replaced Value7" = Table.ReplaceValue(#"Replaced Value5","2008","2024",Replacer.ReplaceText,{"FiscalYearLabel"}),
+				    #"Replaced Value6" = Table.ReplaceValue(#"Replaced Value7","2007","2023",Replacer.ReplaceText,{"FiscalYearLabel"}),
+				    #"Replaced Value8" = Table.ReplaceValue(#"Replaced Value6","2009","2025",Replacer.ReplaceText,{"FiscalYearLabel"}),
+				    #"Added Custom" = Table.AddColumn(#"Replaced Value8", "Month sh", each Text.Start(Date.MonthName([Datekey], "en-US"), 3)),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom",{{"Month sh", type text}}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Changed Type",{"Datekey", "FullDateLabel", "Year", "YearLabel", "HalfYear", "Quarter", "Month", "Month sh", "WeekLabel", "CalendarDayOfWeekLabel", "FiscalYear", "FiscalYearLabel", "FiscalHalfYearLabel", "FiscalQuarterLabel", "FiscalMonthLabel", "IsWorkDay", "IsHoliday", "EuropeSeason", "NorthAmericaSeason", "AsiaSeason"}),
+				    #"Added Custom1" = Table.AddColumn(#"Reordered Columns", "WeekDay sh", each Text.Start(Date.DayOfWeekName([Datekey], "en-US"), 3)),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Added Custom1",{{"WeekDay sh", type text}}),
+				    #"Reordered Columns1" = Table.ReorderColumns(#"Changed Type1",{"Datekey", "FullDateLabel", "Year", "YearLabel", "HalfYear", "Quarter", "CalendarMonth", "Month", "Month sh", "WeekLabel", "CalendarDayOfWeekLabel", "WeekDay sh", "FiscalYear", "FiscalYearLabel", "FiscalHalfYearLabel", "FiscalQuarterLabel", "FiscalMonthLabel", "IsWorkDay", "IsHoliday", "EuropeSeason", "NorthAmericaSeason", "AsiaSeason"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Reordered Columns1",{{"Datekey", "Date"}}),
+				    #"Removed Columns4" = Table.RemoveColumns(#"Renamed Columns1",{"CalendarMonth"}),
+				    #"Added Custom2" = Table.AddColumn(#"Removed Columns4", "Month No", each Date.Month ([Date])),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Added Custom2",{{"Month No", Int64.Type}}),
+				    #"Reordered Columns2" = Table.ReorderColumns(#"Changed Type2",{"Date", "FullDateLabel", "Year", "YearLabel", "HalfYear", "Quarter", "Month", "Month sh", "Month No", "WeekLabel", "CalendarDayOfWeekLabel", "WeekDay sh", "FiscalYear", "FiscalYearLabel", "FiscalHalfYearLabel", "FiscalQuarterLabel", "FiscalMonthLabel", "IsWorkDay", "IsHoliday", "EuropeSeason", "NorthAmericaSeason", "AsiaSeason"}),
+				    #"Added Custom3" = Table.AddColumn(#"Reordered Columns2", "Week Day", each Date.DayOfWeekName([Date], "en-US")),
+				    #"Changed Type3" = Table.TransformColumnTypes(#"Added Custom3",{{"Week Day", type text}}),
+				    #"Reordered Columns3" = Table.ReorderColumns(#"Changed Type3",{"Date", "FullDateLabel", "Year", "YearLabel", "HalfYear", "Quarter", "Month", "Month sh", "Month No", "WeekLabel", "CalendarDayOfWeekLabel", "Week Day", "WeekDay sh", "FiscalYear", "FiscalYearLabel", "FiscalHalfYearLabel", "FiscalQuarterLabel", "FiscalMonthLabel", "IsWorkDay", "IsHoliday", "EuropeSeason", "NorthAmericaSeason", "AsiaSeason"}),
+				    #"Removed Columns5" = Table.RemoveColumns(#"Reordered Columns3",{"CalendarDayOfWeekLabel"}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Removed Columns5",{{"WeekDay sh", "WeekDay abbr"}, {"Month sh", "Month abbr"}}),
+				    #"Appended Query" = Table.Combine({#"Renamed Columns2", #"dim Calendar 2026 Model"}),
+				    #"Filtered Rows2" = Table.SelectRows(#"Appended Query", each true),
+				    #"Replaced Value9" = Table.ReplaceValue(#"Filtered Rows2","2009","2024",Replacer.ReplaceText,{"YearLabel"}),
+				    #"Filtered Rows3" = Table.SelectRows(#"Replaced Value9", each true),
+				    #"Replaced Value10" = Table.ReplaceValue(#"Filtered Rows3","2008","2024",Replacer.ReplaceText,{"YearLabel"}),
+				    #"Replaced Value11" = Table.ReplaceValue(#"Replaced Value10","2007","2023",Replacer.ReplaceText,{"YearLabel"}),
+				    #"Filtered Rows4" = Table.SelectRows(#"Replaced Value11", each true),
+				    #"Changed Type4" = Table.TransformColumnTypes(#"Filtered Rows4",{{"Date", type date}})
+				in
+				    #"Changed Type4"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

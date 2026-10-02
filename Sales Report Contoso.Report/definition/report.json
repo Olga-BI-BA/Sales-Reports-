@@ -1,0 +1,193 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY26SU02",
+      "reportVersionAtImport": {
+        "visual": "2.6.0",
+        "report": "3.1.0",
+        "page": "2.3.0"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "Custom25093145533145955.json",
+      "reportVersionAtImport": {
+        "visual": "2.12.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "publicCustomVisuals": [
+    "PBI_CV_16948668_E17D_454B_8664_2F2C470EA8C1",
+    "llmchart06709802FE6FA0A3B7343917444AE804",
+    "orbit50DB3783432B40A69C0B91926CE74CD9"
+  ],
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY26SU02",
+          "path": "BaseThemes/CY26SU02.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "______________2026-09-21_160358440188561033884.png",
+          "path": "______________2026-09-21_160358440188561033884.png",
+          "type": "Image"
+        },
+        {
+          "name": "______________2026-09-21_1605408440256775580857.png",
+          "path": "______________2026-09-21_1605408440256775580857.png",
+          "type": "Image"
+        },
+        {
+          "name": "Close_02_button5921861889707255.png",
+          "path": "Close_02_button5921861889707255.png",
+          "type": "Image"
+        },
+        {
+          "name": "COGS_forecast38271148858029336.png",
+          "path": "COGS_forecast38271148858029336.png",
+          "type": "Image"
+        },
+        {
+          "name": "Custom25093145533145955.json",
+          "path": "Custom25093145533145955.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "Gross_Profit_0211538732610893787.png",
+          "path": "Gross_Profit_0211538732610893787.png",
+          "type": "Image"
+        },
+        {
+          "name": "Gross_Profit_028178893267690055.png",
+          "path": "Gross_Profit_028178893267690055.png",
+          "type": "Image"
+        },
+        {
+          "name": "Insight_02_button22428818593099364.png",
+          "path": "Insight_02_button22428818593099364.png",
+          "type": "Image"
+        },
+        {
+          "name": "Interface_Filters16474293167521792.png",
+          "path": "Interface_Filters16474293167521792.png",
+          "type": "Image"
+        },
+        {
+          "name": "Net_Revenue_m_00790376065811351.png",
+          "path": "Net_Revenue_m_00790376065811351.png",
+          "type": "Image"
+        },
+        {
+          "name": "Net_Revenue_m_028188157042597997.png",
+          "path": "Net_Revenue_m_028188157042597997.png",
+          "type": "Image"
+        },
+        {
+          "name": "Products_0022133918349936899.png",
+          "path": "Products_0022133918349936899.png",
+          "type": "Image"
+        },
+        {
+          "name": "Profit_forecast9667424847376362.png",
+          "path": "Profit_forecast9667424847376362.png",
+          "type": "Image"
+        },
+        {
+          "name": "Revenue_fiolet699098077998969.png",
+          "path": "Revenue_fiolet699098077998969.png",
+          "type": "Image"
+        },
+        {
+          "name": "Revenue_fiolet9512357806047949.png",
+          "path": "Revenue_fiolet9512357806047949.png",
+          "type": "Image"
+        },
+        {
+          "name": "RN_forecast8417296157976052.png",
+          "path": "RN_forecast8417296157976052.png",
+          "type": "Image"
+        },
+        {
+          "name": "Unit_Sold_0337797032801793773.png",
+          "path": "Unit_Sold_0337797032801793773.png",
+          "type": "Image"
+        },
+        {
+          "name": "Untitled_(1)4575978966748675.png",
+          "path": "Untitled_(1)4575978966748675.png",
+          "type": "Image"
+        },
+        {
+          "name": "Untitled_(3)24041917355543851.png",
+          "path": "Untitled_(3)24041917355543851.png",
+          "type": "Image"
+        },
+        {
+          "name": "Untitled_(4)008556251576018026.png",
+          "path": "Untitled_(4)008556251576018026.png",
+          "type": "Image"
+        },
+        {
+          "name": "Untitled_(7)031956879518176606.png",
+          "path": "Untitled_(7)031956879518176606.png",
+          "type": "Image"
+        },
+        {
+          "name": "Untitled3702509911343772.png",
+          "path": "Untitled3702509911343772.png",
+          "type": "Image"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "36aa7d167000cbe64c1b",
+  "position": {
+    "x": 932.23684210526312,
+    "y": 82.081024930747915,
+    "z": 24000,
+    "height": 528.28947368421063,
+    "width": 320.39473684210526,
+    "tabOrder": 26000
+  },
+  "visualGroup": {
+    "displayName": "Tab 3 Insights",
+    "groupMode": "ScaleMode"
+  },
+  "isHidden": true
+}

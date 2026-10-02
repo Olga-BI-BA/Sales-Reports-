@@ -1,0 +1,33 @@
+table Security_Region_RLS
+	lineageTag: 4d9ea592-1894-4c6b-a0f7-006b49af1a0f
+
+	column UserEmail
+		dataType: string
+		lineageTag: 456f5c44-6634-42df-9187-df76250e4e5e
+		summarizeBy: none
+		sourceColumn: UserEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	column ContinentTerritoryGroup
+		dataType: string
+		lineageTag: 197d4fb4-85e6-4d45-9cef-cef4800215d2
+		summarizeBy: none
+		sourceColumn: ContinentTerritoryGroup
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Security_Region_RLS = m
+		mode: import
+		queryGroup: 04_Support
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+				    dbo_v_Security_Region_RLS = Source{[Schema="dbo",Item="v_Security_Region_RLS"]}[Data]
+				in
+				    dbo_v_Security_Region_RLS
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

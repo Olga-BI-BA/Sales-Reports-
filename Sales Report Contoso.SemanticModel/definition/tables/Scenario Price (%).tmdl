@@ -1,0 +1,28 @@
+table 'Scenario Price (%)'
+	lineageTag: 9ad3ed7e-5772-4c13-91c3-bddcb73589b2
+
+	measure 'Price adjustment (%) Value' = SELECTEDVALUE('Scenario Price (%)'[Price adjustment (%)], 0)
+		lineageTag: 744c170b-34f7-4c51-ac17-d9f32105e9b0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Price adjustment (%)'
+		lineageTag: 90935ea9-3ebf-43c6-8648-888af8b411e4
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Scenario Price (%)' = calculated
+		mode: import
+		source = GENERATESERIES(-1, 1, 0.1)
+
+	annotation PBI_Id = d1734da2b2434006bbe49f13822a435d
+

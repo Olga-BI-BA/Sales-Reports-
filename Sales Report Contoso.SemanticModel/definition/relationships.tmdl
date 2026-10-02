@@ -1,0 +1,66 @@
+relationship 88149b54-d8f8-473c-b71d-e59b123b46aa
+	fromColumn: 'fact Sales'.PromotionKey
+	toColumn: 'dim Promotion'.PromotionKey
+
+	annotation PBI_IsFromSource = FS
+
+relationship aba603f0-2d0a-1acd-f2d7-62780a917987
+	fromColumn: 'fact Sales'.DateKey
+	toColumn: 'dim Calendar'.Date
+
+relationship f1bf1c0e-6f5b-05a4-bb63-86507656b543
+	fromColumn: 'fact Inventory'.DateKey
+	toColumn: 'dim Calendar'.Date
+
+relationship 94c15f5b-0bce-4809-9a32-5824b15e6772
+	fromColumn: 'fact Sales'.CurrencyKey
+	toColumn: 'dim Currency'.CurrencyKey
+
+	annotation PBI_IsFromSource = FS
+
+relationship ef6230c1-5570-4765-afeb-1f59be8155ae
+	fromColumn: 'fact Inventory'.CurrencyKey
+	toColumn: 'dim Currency'.CurrencyKey
+
+	annotation PBI_IsFromSource = FS
+
+relationship 9c1da55e-6228-91e4-7e14-9836fd5e159f
+	fromColumn: 'dim Store'.GeographyKey
+	toColumn: 'dim SalesTerritory'.GeographyKey
+
+relationship 7b658282-39ea-27cd-c9a5-34a301c4dadf
+	fromColumn: 'fact Sales'.StoreKey
+	toColumn: 'dim Store'.StoreKey
+
+relationship 34015066-f243-7d75-8361-e86c15588fb0
+	toCardinality: many
+	fromColumn: 'dim SalesTerritory'.SalesTerritoryGroup
+	toColumn: Security_Region_RLS.ContinentTerritoryGroup
+
+relationship f5979431-0a3a-b42e-f9ff-3601cf1d3897
+	toCardinality: many
+	fromColumn: 'dim Store'.StoreKey
+	toColumn: Security_Store_RLS.StoreCode
+
+relationship 262c2a56-9d59-63c7-3f82-7dccb8200693
+	fromColumn: 'fact Inventory'.StoreKey
+	toColumn: 'dim Store'.StoreKey
+
+relationship 7be236ea-d454-fc9a-3a07-c1c1630e6c8a
+	fromColumn: 'fact Sales'.channelKey
+	toColumn: 'dim Channel'.ChannelKey
+
+relationship 208c108f-7e22-7ab9-ffb5-78f7e158dfe1
+	fromColumn: 'fact Sales'.ProductKey
+	toColumn: 'dim Product'.ProductKey
+
+relationship 647c6809-c23c-ae96-7af4-e58a1cb223a1
+	fromColumn: 'XYZ Classification'.ProductKey
+	toColumn: 'dim Product'.ProductKey
+
+relationship 39c55dc9-ad00-4a76-cb75-71fc4ff35427
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: 'Sales Elapsed Days'.DateKey
+	toColumn: 'dim Calendar'.Date
+

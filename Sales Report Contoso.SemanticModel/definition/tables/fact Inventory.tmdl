@@ -1,0 +1,197 @@
+table 'fact Inventory'
+	lineageTag: bdd2e2f6-04d4-4834-8ce2-aff756012651
+
+	column InventoryKey
+		dataType: int64
+		formatString: 0
+		lineageTag: e660e568-bbae-4b6e-9572-e49ded173ccc
+		summarizeBy: count
+		sourceColumn: InventoryKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DateKey
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5cbb8a4b-a058-4837-a079-7e1c0f56334d
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column StoreKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 320b0787-4b1d-4977-9cf4-1f5bb00bcf79
+		summarizeBy: none
+		sourceColumn: StoreKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: afe29c75-0cdb-49e1-8dd0-425fdf4abb74
+		summarizeBy: count
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrencyKey
+		dataType: int64
+		formatString: 0
+		lineageTag: da213057-65b2-4930-b1b3-f85c45a5a7af
+		summarizeBy: none
+		sourceColumn: CurrencyKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column OnHandQuantity
+		dataType: int64
+		formatString: 0
+		lineageTag: 760a7e04-2280-4911-9f99-8f4f0a7c18e8
+		summarizeBy: sum
+		sourceColumn: OnHandQuantity
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column OnOrderQuantity
+		dataType: int64
+		formatString: 0
+		lineageTag: 64a6348d-e17a-4b45-b067-6d8703819dce
+		summarizeBy: sum
+		sourceColumn: OnOrderQuantity
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SafetyStockQuantity
+		dataType: int64
+		formatString: 0
+		lineageTag: fe5306a4-d20e-4aa3-bf0f-5fadbf226f05
+		summarizeBy: sum
+		sourceColumn: SafetyStockQuantity
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitCost
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 2a3758a7-2a73-486a-9f8c-1b21cec3a8c6
+		summarizeBy: sum
+		sourceColumn: UnitCost
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DaysInStock
+		dataType: int64
+		formatString: 0
+		lineageTag: b84a899a-4bb3-4601-bcfe-1cec35267866
+		summarizeBy: sum
+		sourceColumn: DaysInStock
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column MinDayInStock
+		dataType: int64
+		formatString: 0
+		lineageTag: 54e01c99-227e-435d-a9d8-6bd29cc726c4
+		summarizeBy: sum
+		sourceColumn: MinDayInStock
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaxDayInStock
+		dataType: int64
+		formatString: 0
+		lineageTag: 9df55275-67a5-4459-936d-41d19d6524b6
+		summarizeBy: sum
+		sourceColumn: MaxDayInStock
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Aging
+		dataType: int64
+		formatString: 0
+		lineageTag: b1f4af85-7ddf-4df2-badb-379017cde882
+		summarizeBy: sum
+		sourceColumn: Aging
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ETLLoadID
+		dataType: int64
+		formatString: 0
+		lineageTag: e48c897e-ea97-42bd-9412-1e080c3c61c7
+		summarizeBy: count
+		sourceColumn: ETLLoadID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column LoadDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: c4a49b5f-0ad0-4b6a-b92c-c01a63bf084f
+		summarizeBy: none
+		sourceColumn: LoadDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column UpdateDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 4b642820-44c9-4d5a-a6ff-c581622f08ce
+		summarizeBy: none
+		sourceColumn: UpdateDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'fact Inventory' = m
+		mode: import
+		queryGroup: 01_Fact
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS", "ContosoRetailDW"),
+				    dbo_FactInventory = Source{[Schema="dbo",Item="FactInventory"]}[Data]
+				in
+				    dbo_FactInventory
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

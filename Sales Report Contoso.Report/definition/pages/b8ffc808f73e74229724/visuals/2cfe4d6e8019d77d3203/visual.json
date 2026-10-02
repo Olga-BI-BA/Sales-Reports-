@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "2cfe4d6e8019d77d3203",
+  "position": {
+    "x": 295.0045815065975,
+    "y": 194.08196151749837,
+    "z": 19002,
+    "height": 69.869506146299415,
+    "width": 206.78550808955279
+  },
+  "visualGroup": {
+    "displayName": "Cross Profit group",
+    "groupMode": "ScaleMode"
+  }
+}

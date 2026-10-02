@@ -1,0 +1,50 @@
+table P_Columns
+	lineageTag: 3fbf6b32-77d7-4188-a561-dc6b55ad1ad4
+
+	column 'Parameter _Columns'
+		lineageTag: ee298c38-cd8b-4e62-ab02-4d994eeb4b1d
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter _Columns Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter _Columns Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter _Columns Fields'
+		isHidden
+		lineageTag: 65a7df87-0435-46f8-af05-26d7f5166b69
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter _Columns Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter _Columns Order'
+		isHidden
+		formatString: 0
+		lineageTag: 1e22f255-f17b-49a6-b68f-9d912827bca0
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition P_Columns = calculated
+		mode: import
+		source =
+				{
+				    ("Channel", NAMEOF('dim Channel'[ChannelName]), 0),
+				    ("Macro Region", NAMEOF('dim SalesTerritory'[SalesTerritoryGroup]), 1),
+				    ("Country", NAMEOF('dim SalesTerritory'[SalesTerritoryCountry]), 2),
+				    ("Category", NAMEOF('dim Product'[Category]), 3)
+				}
+
+	annotation PBI_Id = 028cf4f061d944ecb9db0e24977dacf8
+

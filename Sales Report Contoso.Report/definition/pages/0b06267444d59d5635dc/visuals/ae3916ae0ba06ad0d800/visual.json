@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "ae3916ae0ba06ad0d800",
+  "position": {
+    "x": 475.55555555555554,
+    "y": 185.55555555555554,
+    "z": 20000,
+    "height": 495.55555555555554,
+    "width": 438.88888888888886,
+    "tabOrder": 25000
+  },
+  "visualGroup": {
+    "displayName": "Tab 2 Trends",
+    "groupMode": "ScaleMode"
+  }
+}

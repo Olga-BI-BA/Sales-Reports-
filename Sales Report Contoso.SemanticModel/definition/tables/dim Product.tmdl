@@ -1,0 +1,290 @@
+table 'dim Product'
+	lineageTag: 34f9d39a-7fc6-4725-baa6-b0ebb432c776
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: c2488c78-ac69-49f9-b2e8-71fc20d3ed14
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product
+		dataType: string
+		lineageTag: 788233fe-3dbe-451a-bf0c-476e348ccbb7
+		summarizeBy: none
+		sourceColumn: Product
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 32fde191-47e8-45f9-bff4-6f9076688ab7
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subcategory
+		dataType: string
+		lineageTag: 7c32c6db-c034-407c-bd2e-9e4dde02cb2e
+		summarizeBy: none
+		sourceColumn: Subcategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column Manufacturer
+		dataType: string
+		lineageTag: 89126dff-84ee-4fd0-b7f6-8f72638b3fe3
+		summarizeBy: none
+		sourceColumn: Manufacturer
+
+		annotation SummarizationSetBy = Automatic
+
+	column Brand
+		dataType: string
+		lineageTag: 2a81066e-9b3f-434e-8e69-87de86d00825
+		summarizeBy: none
+		sourceColumn: Brand
+
+		annotation SummarizationSetBy = Automatic
+
+	column Class
+		dataType: string
+		lineageTag: 20dea51b-ddf3-47d5-9b6c-6e58fa10590d
+		summarizeBy: none
+		sourceColumn: Class
+
+		annotation SummarizationSetBy = Automatic
+
+	column ColorID
+		dataType: string
+		lineageTag: c7c79f2b-2848-4767-a81d-33458c08a326
+		summarizeBy: none
+		sourceColumn: ColorID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Color
+		dataType: string
+		lineageTag: 19a4dfbc-c618-452f-ade9-a6dd4a25ec76
+		summarizeBy: none
+		sourceColumn: Color
+
+		annotation SummarizationSetBy = Automatic
+
+	column StockTypeID
+		dataType: string
+		lineageTag: c999089d-7c24-4ed7-aab4-4db2aa530ec5
+		summarizeBy: none
+		sourceColumn: StockTypeID
+
+		annotation SummarizationSetBy = Automatic
+
+	column StockType
+		dataType: string
+		lineageTag: 777c8112-c6f8-461a-a525-4fe313694f9d
+		summarizeBy: none
+		sourceColumn: StockType
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ABC 2025' =
+			
+			VAR LastYear = MAXX ( ALL ( 'ABC XYZ Classification' ), [Year] )-1
+			VAR Result =
+			    LOOKUPVALUE (
+			        'ABC XYZ Classification'[ABC Class],
+			        'ABC XYZ Classification'[ProductKey], 'dim Product'[ProductKey],
+			        'ABC XYZ Classification'[Year], LastYear
+			    )
+			RETURN
+			    COALESCE ( Result, "No Sales" )
+		lineageTag: e6429abc-d796-4fd2-b962-efbd80b3198f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'XYZ 2025' =
+			
+			VAR LastYear = MAXX ( ALL ( 'ABC XYZ Classification' ), [Year] )-1
+			VAR Result =
+			    LOOKUPVALUE (
+			        'ABC XYZ Classification'[XYZ Class],
+			        'ABC XYZ Classification'[ProductKey], 'dim Product'[ProductKey],
+			        'ABC XYZ Classification'[Year], LastYear
+			    )
+			RETURN
+			    COALESCE ( Result, "No Sales" )
+		lineageTag: c1aff4db-e397-467f-af70-daff1f57ef76
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column AvailableforSaleDate
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 0a965993-8284-4424-b7d1-448c405a6505
+		summarizeBy: none
+		sourceColumn: AvailableforSaleDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Available Year' = YEAR ( 'dim Product'[AvailableForSaleDate] )
+		lineageTag: 045fcb59-11cd-4aca-bf30-19015357bfa2
+		summarizeBy: none
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Last Sale Year' =
+			
+			CALCULATE ( MAX ( 'dim Calendar'[Year] ), 'fact Sales'[SalesQuantity] > 0 )
+		lineageTag: dbf6de85-d1c5-4190-9005-7df18ccc61e6
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'ABC XYZ 2025' =
+			
+			VAR BaseYear = MAXX ( ALL ( 'ABC XYZ Classification' ), 'ABC XYZ Classification'[Year] )-1
+			VAR AvailYr  = YEAR ( 'dim Product'[AvailableForSaleDate] )
+			VAR LastYr   = 'dim Product'[Last Sale Year]-1
+			VAR ClassBase =
+			    LOOKUPVALUE (
+			        'ABC XYZ Classification'[ABC XYZ],
+			        'ABC XYZ Classification'[ProductKey], 'dim Product'[ProductKey],
+			        'ABC XYZ Classification'[Year], BaseYear
+			    )
+			VAR Gap = BaseYear - LastYr
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        AvailYr > BaseYear, "Not launched",
+			        NOT ISBLANK ( ClassBase ) && AvailYr = BaseYear, "New " & ClassBase,
+			        NOT ISBLANK ( ClassBase ), ClassBase,
+			        ISBLANK ( LastYr ), "Listed, no sales",
+			        Gap = 1, "Dormant 1y",
+			        Gap <= 3, "Dormant " & Gap & "y",
+			        "Dormant 4y+"
+			    )
+		lineageTag: 695d3498-8a5f-4649-8682-caecbf333acf
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'First Sale Year' =
+			
+			CALCULATE ( MIN ( 'dim Calendar'[Year] ), 'fact Sales'[SalesQuantity] > 0 )
+		formatString: 0
+		lineageTag: fb3cc7ad-7d35-4a5c-95f2-c54e04e32c58
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CV Qty Col 2025' = CALCULATE ( [CV Qty], 'dim Calendar'[Year] = 2025 )
+		formatString: 0.000
+		lineageTag: 2aabb39f-9250-4d93-9f87-9b721030c9be
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation __PBI_SemanticLinks = [{"LinkTarget":{"TableName":"dim Product","TableItemName":"CV Qty Col 2025 (bins)","ObjectType":4},"LinkType":"UsedInGroup"}]
+
+	column 'CV Qty Col 2025 (bins)' =
+			IF(
+				ISBLANK('dim Product'[CV Qty Col 2025]),
+				BLANK(),
+				IF(
+					'dim Product'[CV Qty Col 2025] >= 0,
+					ROUNDDOWN('dim Product'[CV Qty Col 2025] / 0.1, 0) * 0.1,
+					ROUNDUP('dim Product'[CV Qty Col 2025] / 0.1, 0) * 0.1
+				)
+			)
+		formatString: 0.000
+		lineageTag: 38ab819b-0cd1-41d9-8751-51ec6738405a
+		summarizeBy: none
+
+		extendedProperty GroupingMetadata =
+				{
+				  "version": 0,
+				  "groupedColumns": [
+				    {
+				      "Column": {
+				        "Expression": {
+				          "SourceRef": {
+				            "Entity": "dim Product"
+				          }
+				        },
+				        "Property": "CV Qty Col 2025"
+				      }
+				    }
+				  ],
+				  "binningMetadata": {
+				    "binSize": {
+				      "value": 0.1,
+				      "unit": 0
+				    }
+				  }
+				}
+
+		annotation GroupingDesignState = {"Version":0,"Sources":[{"Name":"d","Entity":"dim Product"}],"GroupedColumns":[{"Column":{"Expression":{"SourceRef":{"Source":"d"}},"Property":"CV Qty Col 2025"}}],"BinItem":{"Expression":{"Floor":{"Expression":{"Column":{"Expression":{"SourceRef":{"Source":"d"}},"Property":"CV Qty Col 2025"}},"Size":0.1}}}}
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Product Hierarchy'
+		lineageTag: a0939489-3421-46e2-be53-f2fe0f931ba1
+
+		level Category
+			lineageTag: 57d4877e-7c5c-4c77-ad3f-4d5b1e7ca2d7
+			column: Category
+
+		level Subcategory
+			lineageTag: 14848889-544e-41a6-a512-dcd9104c1326
+			column: Subcategory
+
+		level Brand
+			lineageTag: 4bee45ba-309e-4be4-91da-5f2a7b2feda1
+			column: Brand
+
+		level Product
+			lineageTag: 2d7f00f8-7f90-4319-b409-6e9890202f0a
+			column: Product
+
+	partition 'dim Product' = m
+		mode: import
+		queryGroup: 02_Dimentions
+		source =
+				let
+				    Source = #"dim Product original",
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"ProductLabel", "UnitOfMeasureID", "UnitOfMeasureName", "WeightUnitMeasureID", "Weight", "SizeUnitMeasureID", "SizeRange", "Size", "StyleName", "StyleID", "ClassID", "ProductDescription"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Removed Columns", each true),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Filtered Rows",{"StopSaleDate", "FactSalesQuota", "FactSales", "FactInventory", "FactOnlineSales", "UpdateDate", "ETLLoadID", "ProductURL", "Status", "ImageURL", "LoadDate"}),
+				    #"Expanded DimProductSubcategory" = Table.ExpandRecordColumn(#"Removed Columns1", "DimProductSubcategory", {"ProductSubcategoryName", "ProductCategoryKey"}, {"ProductSubcategoryName", "ProductCategoryKey"}),
+				    #"Merged Queries" = Table.NestedJoin(#"Expanded DimProductSubcategory", {"ProductCategoryKey"}, #"dim ProductCategory", {"ProductCategoryKey"}, "dim ProductCategory", JoinKind.LeftOuter),
+				    #"Expanded dim ProductCategory" = Table.ExpandTableColumn(#"Merged Queries", "dim ProductCategory", {"ProductCategoryName"}, {"ProductCategoryName"}),
+				    #"Removed Columns2" = Table.RemoveColumns(#"Expanded dim ProductCategory",{"ProductCategoryKey", "ProductSubcategoryKey"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns2",{{"ProductName", "Product"}, {"BrandName", "Brand"}, {"ClassName", "Class"}, {"ColorName", "Color"}, {"StockTypeName", "StockType"}, {"ProductSubcategoryName", "Subcategory"}, {"ProductCategoryName", "Category"}}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Renamed Columns",{"ProductKey", "Product", "Category", "Subcategory", "Manufacturer", "Brand", "Class", "ColorID", "Color", "StockTypeID", "StockType", "UnitCost", "UnitPrice", "AvailableForSaleDate"}),
+				    #"Removed Columns3" = Table.RemoveColumns(#"Reordered Columns",{"UnitPrice", "UnitCost"}),
+				    #"Added Custom" = Table.AddColumn(#"Removed Columns3", "Custom", each if [AvailableForSaleDate] = null then null
+				else Date.AddMonths(
+				    [AvailableForSaleDate],
+				    if Date.Year([AvailableForSaleDate]) = 2008 then 176 else 168
+				)),
+				    #"Removed Columns4" = Table.RemoveColumns(#"Added Custom",{"AvailableForSaleDate"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns4",{{"Custom", "AvailableforSaleDate"}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns1",{{"AvailableforSaleDate", type date}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

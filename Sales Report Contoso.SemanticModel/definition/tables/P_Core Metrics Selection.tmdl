@@ -1,0 +1,54 @@
+table 'P_Core Metrics Selection'
+	lineageTag: 0c77fd1e-ab1a-4874-be75-ef992120cbd4
+
+	column 'Metric Selection'
+		lineageTag: 91190a2c-daee-4f9b-b2e8-713392c36c71
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Metric Selection Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Metric Selection Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Selection Fields'
+		isHidden
+		lineageTag: a5a8e48e-b068-46c2-b69e-f7f735f558a2
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Metric Selection Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Selection Order'
+		isHidden
+		formatString: 0
+		lineageTag: 89e027b5-d5a7-4a9f-8d34-532f086a7c78
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'P_Core Metrics Selection' = calculated
+		mode: import
+		source =
+				{
+				    ("Net Revenue",        NAMEOF('_Measures'[Net Revenue]), 0),
+				    ("Gross Profit",       NAMEOF('_Measures'[Gross Profit]), 1),
+				    ("Gross Margin",       NAMEOF('_Measures'[Gross Margin]), 2),
+				    ("# Active SKUs",      NAMEOF('_Measures'[Selling SKUs]), 3),
+				    ("Discount Depth",     NAMEOF('_Measures'[Discount Depth]), 4),
+				    ("Cost of Goods",      NAMEOF('_Measures'[COGS]), 5),
+				    ("Total Returns",      NAMEOF('_Measures'[Total Returns]), 6),
+				    ("YoY Revenue Growth", NAMEOF('_Measures'[YoY Revenue %]), 7)
+				}
+
+	annotation PBI_Id = 539de8a6e1cb4a89beeb0cb1231ea081
+
